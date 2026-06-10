@@ -692,6 +692,8 @@ function setDeposit(amount) { document.getElementById('depositAmount').value = a
 
 // ---- MESSAGES ----
 let currentChat = null;
+let dashboardChatInterval = null;
+let lastDashboardMessageCount = 0;
 
 async function loadConversations() {
   const container = document.getElementById('conversationList');
@@ -741,17 +743,28 @@ async function openChat(orderId) {
     <div><div style="font-size:14px; font-weight:700;">${title}</div><div style="font-size:12px; color:#00ff64;">${subtitle}</div></div>
   `;
   
-  document.getElementById('chatMessages').innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:20px;"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
   document.getElementById('chatInputArea').style.display = 'flex';
+  
+  // Clear any existing interval when switching chats
+  if (dashboardChatInterval) clearInterval(dashboardChatInterval);
+  
+  // Initial load
+  await loadChatMessages(orderId, true);
+  
+  // Poll every 3 seconds
+  dashboardChatInterval = setInterval(() => loadChatMessages(currentChat, false), 3000);
+}
 
+async function loadChatMessages(orderId, forceScroll = false) {
   const messages = await getChatHistoryAPI(orderId);
+  const chatMessagesEl = document.getElementById('chatMessages');
   
   if (messages.length === 0) {
-    document.getElementById('chatMessages').innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:20px;">No messages yet. Send the first message!</div>';
+    chatMessagesEl.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:20px;">No messages yet. Send the first message!</div>';
     return;
   }
 
-  document.getElementById('chatMessages').innerHTML = `<div style="display:flex; flex-direction:column; gap:12px; padding:20px; width:100%;">${messages.map(m => {
+  const newHtml = `<div style="display:flex; flex-direction:column; gap:12px; padding:20px; width:100%;">${messages.map(m => {
     const isMe = m.sender_username === user.username;
     const isOwner = m.sender_username === 'NaviOwner';
     const bg = isMe ? 'var(--gradient-button)' : (isOwner ? 'rgba(255,215,0,0.1)' : 'var(--bg-surface)');
@@ -771,8 +784,14 @@ async function openChat(orderId) {
     `;
   }).join('')}</div>`;
   
-  const chatMessagesEl = document.getElementById('chatMessages');
-  chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
+  if (chatMessagesEl.innerHTML !== newHtml) {
+    chatMessagesEl.innerHTML = newHtml;
+  }
+  
+  if (forceScroll || messages.length > lastDashboardMessageCount) {
+    chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
+    lastDashboardMessageCount = messages.length;
+  }
 }
 
 async function sendMessage() {
@@ -791,7 +810,7 @@ async function sendMessage() {
   
   if (success) {
     input.value = '';
-    openChat(currentChat);
+    loadChatMessages(currentChat, true);
   } else {
     showToast('Failed to send message', 'error');
   }

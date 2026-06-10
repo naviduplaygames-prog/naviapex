@@ -454,16 +454,22 @@ function renderFloatingSupport() {
   loadSupportMessages();
 }
 
+let supportChatInterval = null;
+let lastSupportMessageCount = 0;
+
 function toggleSupportWindow() {
   const win = document.getElementById('floatingSupportWindow');
   win.classList.toggle('active');
   if (win.classList.contains('active')) {
-    loadSupportMessages();
+    loadSupportMessages(true);
     document.getElementById('supportUnreadBadge').style.display = 'none';
+    supportChatInterval = setInterval(() => loadSupportMessages(false), 3000);
+  } else {
+    if (supportChatInterval) clearInterval(supportChatInterval);
   }
 }
 
-async function loadSupportMessages() {
+async function loadSupportMessages(forceScroll = false) {
   const user = getUser();
   if (!user) return;
   const supportId = 'support_' + user.username;
@@ -483,7 +489,7 @@ async function loadSupportMessages() {
     return;
   }
 
-  container.innerHTML = messages.map(m => {
+  const newHtml = messages.map(m => {
     const isMe = m.sender_username === user.username;
     const isOwner = m.sender_username === 'NaviOwner';
     const bg = isMe ? 'var(--gradient-button)' : (isOwner ? 'rgba(255,215,0,0.1)' : 'var(--bg-surface)');
@@ -503,7 +509,15 @@ async function loadSupportMessages() {
     `;
   }).join('');
   
-  container.scrollTop = container.scrollHeight;
+  // Only update DOM if things changed to prevent flickering
+  if (container.innerHTML !== newHtml) {
+    container.innerHTML = newHtml;
+  }
+  
+  if (forceScroll || messages.length > lastSupportMessageCount) {
+    container.scrollTop = container.scrollHeight;
+    lastSupportMessageCount = messages.length;
+  }
 }
 
 async function sendSupportMessage() {
@@ -525,7 +539,7 @@ async function sendSupportMessage() {
 
   if (success) {
     input.value = '';
-    loadSupportMessages();
+    loadSupportMessages(true);
   } else {
     showToast('Failed to send message', 'error');
   }
