@@ -277,6 +277,17 @@ app.post('/api/applications/:id/approve', authenticateToken, (req, res) => {
   });
 });
 
+app.post('/api/applications/:id/decline', authenticateToken, (req, res) => {
+  if (req.user.role !== 'owner') return res.status(403).json({ error: 'Forbidden' });
+  const { id } = req.params;
+
+  db.run(`UPDATE applications SET status = 'declined' WHERE id = ?`, [id], function(err) {
+    if (err) return res.status(500).json({ error: err.message });
+    if (this.changes === 0) return res.status(404).json({ error: 'Application not found' });
+    res.json({ success: true });
+  });
+});
+
 // Serve frontend for all non-API routes
 app.get(/(.*)/, (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'website', 'index.html'));

@@ -392,6 +392,16 @@ async function approveApplicationAPI(id) {
   } catch (err) { return false; }
 }
 
+async function declineApplicationAPI(id) {
+  try {
+    const res = await fetch(`/api/applications/${id}/decline`, {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + getToken() }
+    });
+    return res.ok;
+  } catch (err) { return false; }
+}
+
 // ==========================================
 // FORM VALIDATION
 // ==========================================

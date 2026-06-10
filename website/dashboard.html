@@ -729,7 +729,12 @@ async function loadApplications() {
         <td style="font-family:'Orbitron',monospace; color:var(--apex-red);">${a.rank || 'N/A'}</td>
         <td style="color:var(--text-muted);">${a.discord}</td>
         <td style="font-size:12px; max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${a.experience || 'None'}</td>
-        <td><button class="btn btn-primary btn-sm" onclick="approveApplication(${a.id})"><i class="fas fa-check"></i> Approve</button></td>
+        <td>
+          <div style="display:flex; gap:8px;">
+            <button class="btn btn-primary btn-sm" onclick="approveApplication(${a.id})"><i class="fas fa-check"></i> Approve</button>
+            <button class="btn btn-ghost btn-sm" style="color:var(--apex-red);" onclick="declineApplication(${a.id})"><i class="fas fa-times"></i> Decline</button>
+          </div>
+        </td>
       </tr>
     `).join('')}</tbody>
   </table></div>`;
@@ -743,6 +748,18 @@ async function approveApplication(id) {
       loadApplications();
     } else {
       showToast('Failed to approve user', 'error');
+    }
+  }
+}
+
+async function declineApplication(id) {
+  if (confirm('Are you sure you want to decline this application?')) {
+    const success = await declineApplicationAPI(id);
+    if (success) {
+      showToast('Application declined.', 'info');
+      loadApplications();
+    } else {
+      showToast('Failed to decline application', 'error');
     }
   }
 }
