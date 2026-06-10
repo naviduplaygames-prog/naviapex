@@ -105,6 +105,9 @@
         <span class="sidebar-icon"><i class="fas fa-comments"></i></span> Messages
         <span style="margin-left:auto; background:var(--apex-red); color:#fff; font-size:10px; font-weight:700; padding:1px 6px; border-radius:8px;">3</span>
       </div>
+      <div class="sidebar-link" id="nav-applications" onclick="switchPage('applications')" style="display:none; color:var(--apex-gold);">
+        <span class="sidebar-icon"><i class="fas fa-file-signature"></i></span> Applications
+      </div>
     </div>
 
     <div class="sidebar-section">
@@ -361,6 +364,16 @@
       </div>
     </div>
 
+    <!-- ========== APPLICATIONS PAGE ========== -->
+    <div class="dash-page" id="page-applications">
+      <h1 style="font-family:'Orbitron',monospace; font-size:22px; font-weight:700; margin-bottom:28px; color:var(--apex-gold);">Seller Applications</h1>
+      <p style="color:var(--text-secondary); margin-bottom:20px;">Review and approve pending applications to upgrade users to Verified Sellers.</p>
+      
+      <div id="applicationsContainer">
+        <div style="text-align:center; padding:40px; color:var(--text-muted);"><i class="fas fa-spinner fa-spin"></i> Loading applications...</div>
+      </div>
+    </div>
+
     <!-- ========== NOTIFICATIONS PAGE ========== -->
     <div class="dash-page" id="page-notifications">
       <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:28px;">
@@ -504,6 +517,10 @@ function populateUI() {
   document.getElementById('settingsAvatar').textContent = initials;
   document.getElementById('settingsUsername').value = user.username;
   document.getElementById('settingsEmail').value = user.email;
+
+  if (user.role === 'owner') {
+    document.getElementById('nav-applications').style.display = 'flex';
+  }
 
   const orders = getOrders().filter(o => o.buyer === user.username);
   const myListings = getListings().filter(l => l.seller === user.username);
@@ -650,6 +667,8 @@ function switchPage(page) {
 
   if (page === 'messages') {
     loadConversations();
+  } else if (page === 'applications') {
+    loadApplications();
   }
 }
 
@@ -684,6 +703,47 @@ function confirmDelete() {
     localStorage.removeItem('navipex_user');
     showToast('Account deleted. Goodbye!','info');
     setTimeout(()=>window.location.href='index.html',1500);
+  }
+}
+
+// ---- APPLICATIONS (OWNER) ----
+async function loadApplications() {
+  const container = document.getElementById('applicationsContainer');
+  if (user.role !== 'owner') return;
+  
+  container.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-muted);"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+  
+  const apps = await getApplicationsAPI();
+  
+  if (apps.length === 0) {
+    container.innerHTML = '<div style="text-align:center; padding:60px; color:var(--text-muted); background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-xl);"><div style="font-size:56px; margin-bottom:16px;">📂</div><div style="font-size:18px; font-weight:600;">No pending applications</div></div>';
+    return;
+  }
+  
+  container.innerHTML = `<div style="overflow-x:auto;"><table class="data-table">
+    <thead><tr><th>Username</th><th>Type</th><th>Rank</th><th>Discord</th><th>Experience</th><th>Actions</th></tr></thead>
+    <tbody>${apps.map(a => `
+      <tr>
+        <td style="font-weight:700; color:var(--text-primary);">${a.username}</td>
+        <td><span class="specialty-tag">${a.type}</span></td>
+        <td style="font-family:'Orbitron',monospace; color:var(--apex-red);">${a.rank || 'N/A'}</td>
+        <td style="color:var(--text-muted);">${a.discord}</td>
+        <td style="font-size:12px; max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${a.experience || 'None'}</td>
+        <td><button class="btn btn-primary btn-sm" onclick="approveApplication(${a.id})"><i class="fas fa-check"></i> Approve</button></td>
+      </tr>
+    `).join('')}</tbody>
+  </table></div>`;
+}
+
+async function approveApplication(id) {
+  if (confirm('Approve this user and upgrade them to Verified Seller?')) {
+    const success = await approveApplicationAPI(id);
+    if (success) {
+      showToast('User approved as Verified Seller! ✅', 'success');
+      loadApplications();
+    } else {
+      showToast('Failed to approve user', 'error');
+    }
   }
 }
 

@@ -248,20 +248,48 @@ function switchTab(type) {
   });
 }
 
-function submitApplication(e, type) {
+async function submitApplication(e, type) {
   e.preventDefault();
   const user = getUser();
   if (!user) { showToast('Please sign in to apply!', 'info'); setTimeout(()=>window.location.href='login.html',1200); return; }
 
   let title = '';
-  if (type === 'boosting') title = 'Booster Application';
-  else if (type === 'account') title = 'Account Seller Application';
-  else title = 'Coach Application';
+  let rank = '';
+  let exp = '';
+  let discord = '';
 
-  addListing({ type: 'application', title: title, price: 'N/A', status: 'pending' });
-  showToast('Application submitted! We will contact you on Discord.', 'success');
-  renderMyListings();
-  e.target.reset();
+  if (type === 'boosting') {
+    title = 'Booster Application';
+    rank = document.getElementById('b_rank').value;
+    exp = document.getElementById('b_exp').value;
+    discord = document.getElementById('b_discord').value;
+  } else if (type === 'account') {
+    title = 'Account Seller Application';
+    rank = 'N/A';
+    exp = document.getElementById('a_exp').value;
+    discord = document.getElementById('a_discord').value;
+  } else {
+    title = 'Coach Application';
+    rank = document.getElementById('c_rank').value;
+    exp = document.getElementById('c_exp').value;
+    discord = document.getElementById('c_discord').value;
+  }
+
+  const success = await submitApplicationAPI({
+    type: title,
+    discord: discord,
+    experience: exp,
+    rank: rank
+  });
+
+  if (success) {
+    addListing({ type: 'application', title: title, price: 'N/A', status: 'pending' }); // keep local copy for frontend UI list
+    showToast('Application submitted! We will contact you on Discord.', 'success');
+    renderMyListings();
+    e.target.reset();
+  } else {
+    showToast('Failed to submit application. Please try again.', 'error');
+  }
 }
 
 function renderMyListings() {

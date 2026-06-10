@@ -63,6 +63,17 @@ const db = new sqlite3.Database('./naviapex.db', (err) => {
       content TEXT,
       timestamp TEXT
     )`);
+
+    db.run(`CREATE TABLE IF NOT EXISTS applications (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      username TEXT,
+      type TEXT,
+      discord TEXT,
+      experience TEXT,
+      rank TEXT,
+      status TEXT DEFAULT 'pending',
+      date TEXT
+    )`);
   }
 });
 
@@ -220,6 +231,50 @@ app.post('/api/seed', (req, res) => {
   });
   stmt.finalize();
   res.json({ success: true, message: 'Database seeded' });
+});
+
+// ==========================================
+// SELLER APPLICATIONS API
+// ==========================================
+
+app.post('/api/applications', authenticateToken, (req, res) => {
+  const { type, discord, experience, rank } = req.body;
+  if (!type || !discord) return res.status(400).json({ error: 'Missing required fields' });
+
+  db.run(`INSERT INTO applications (username, type, discord, experience, rank, date) VALUES (?, ?, ?, ?, ?, ?)`,
+    [req.user.username, type, discord, experience || '', rank || '', new Date().toISOString()],
+    function(err) {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json({ success: true, id: this.lastID });
+    }
+  );
+});
+
+app.get('/api/applications', authenticateToken, (req, res) => {
+  if (req.user.role !== 'owner') return res.status(403).json({ error: 'Forbidden' });
+  
+  db.all(`SELECT * FROM applications WHERE status = 'pending' ORDER BY id DESC`, [], (err, rows) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(rows);
+  });
+});
+
+app.post('/api/applications/:id/approve', authenticateToken, (req, res) => {
+  if (req.user.role !== 'owner') return res.status(403).json({ error: 'Forbidden' });
+  const { id } = req.params;
+
+  db.get(`SELECT username FROM applications WHERE id = ?`, [id], (err, appRow) => {
+    if (err) return res.status(500).json({ error: err.message });
+    if (!appRow) return res.status(404).json({ error: 'Application not found' });
+
+    db.serialize(() => {
+      db.run(`UPDATE applications SET status = 'approved' WHERE id = ?`, [id]);
+      db.run(`UPDATE users SET role = 'seller' WHERE username = ?`, [appRow.username], function(err) {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ success: true });
+      });
+    });
+  });
 });
 
 // Serve frontend for all non-API routes

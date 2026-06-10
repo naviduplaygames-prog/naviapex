@@ -358,6 +358,41 @@ async function sendMessageAPI(orderId, content) {
 }
 
 // ==========================================
+// APPLICATIONS MANAGEMENT
+// ==========================================
+
+async function submitApplicationAPI(data) {
+  try {
+    const res = await fetch('/api/applications', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getToken() },
+      body: JSON.stringify(data)
+    });
+    return res.ok;
+  } catch (err) { return false; }
+}
+
+async function getApplicationsAPI() {
+  try {
+    const res = await fetch('/api/applications', {
+      headers: { 'Authorization': 'Bearer ' + getToken() }
+    });
+    if (!res.ok) return [];
+    return await res.json();
+  } catch (err) { return []; }
+}
+
+async function approveApplicationAPI(id) {
+  try {
+    const res = await fetch(`/api/applications/${id}/approve`, {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + getToken() }
+    });
+    return res.ok;
+  } catch (err) { return false; }
+}
+
+// ==========================================
 // FORM VALIDATION
 // ==========================================
 
