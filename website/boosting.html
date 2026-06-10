@@ -107,6 +107,35 @@
           </div>
         </div>
 
+        <!-- Queue Type -->
+        <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-xl); padding:28px; margin-bottom:20px;">
+          <h3 style="font-family:'Rajdhani',sans-serif; font-size:18px; font-weight:700; margin-bottom:20px;">Queue Type</h3>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+            <label class="option-toggle" id="optSoloQ">
+              <input type="radio" name="queue_type" value="solo" checked onchange="updatePrice()">
+              <div class="option-toggle-content">
+                <span style="font-size:20px;">👤</span>
+                <div>
+                  <div style="font-weight:700; font-size:14px;">Solo Queue</div>
+                  <div style="font-size:12px; color:var(--text-muted);">Booster plays on your account</div>
+                </div>
+                <div style="margin-left:auto; color:var(--text-muted); font-weight:700; font-size:13px;">Base Price</div>
+              </div>
+            </label>
+            <label class="option-toggle" id="optDuoQ">
+              <input type="radio" name="queue_type" value="duo" onchange="updatePrice()">
+              <div class="option-toggle-content">
+                <span style="font-size:20px;">👥</span>
+                <div>
+                  <div style="font-weight:700; font-size:14px;">Duo Queue</div>
+                  <div style="font-size:12px; color:var(--text-muted);">Play together with our pro</div>
+                </div>
+                <div style="margin-left:auto; color:var(--apex-red); font-weight:700; font-size:13px;">+50%</div>
+              </div>
+            </label>
+          </div>
+        </div>
+
         <!-- Boost Options -->
         <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-xl); padding:28px;">
           <h3 style="font-family:'Rajdhani',sans-serif; font-size:18px; font-weight:700; margin-bottom:20px;">Boost Options</h3>
@@ -436,8 +465,8 @@ const ranks = [
   { id:'gold',     label:'Gold',     icon:'🥇', price:15 },
   { id:'platinum', label:'Platinum', icon:'💎', price:30 },
   { id:'diamond',  label:'Diamond',  icon:'💠', price:55 },
-  { id:'master',   label:'Master',   icon:'👑', price:90 },
-  { id:'predator', label:'Predator', icon:'🔴', price:150 },
+  { id:'master',   label:'Master',   icon:'👑', price:135 },
+  { id:'predator', label:'Predator', icon:'🔴', price:200 },
 ];
 
 let selectedFrom = 0;
@@ -505,6 +534,7 @@ function setToRP(v) { selectedToRP = parseInt(v) || 0; renderRankButtons(); }
 
 function getAddonsMultiplier() {
   let mult = 1;
+  if (document.querySelector('input[name="queue_type"]:checked')?.value === 'duo') mult += 0.5;
   if (document.querySelector('#optExpress input')?.checked) mult += 0.5;
   if (document.querySelector('#optStream input')?.checked) mult += 0.1;
   if (document.querySelector('#optOffline input')?.checked) mult += 0.15;
@@ -519,7 +549,7 @@ function calculateBasePrice() {
   // Calculate abstract points for progression
   const getPoints = (idx, div, rp) => {
     if (idx <= 4) {
-      return ranks[idx].price + (ranks[Math.min(idx+1, 4)].price - ranks[idx].price) * ((4 - div) / 4);
+      return ranks[idx].price + (ranks[Math.min(idx+1, 5)].price - ranks[idx].price) * ((4 - div) / 4);
     } else {
       return ranks[5].price + (rp * 0.005); // Master+: $0.005 per RP
     }
