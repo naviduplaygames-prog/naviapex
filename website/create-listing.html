@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Listing – NaviApex</title>
+  <meta name="description" content="Create a new listing on NaviApex marketplace.">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body { padding-top: calc(var(--nav-height) + 42px); }
+    .create-tabs { display:flex; gap:4px; background:var(--bg-secondary); border:1px solid var(--border-color); border-radius:var(--radius-lg); padding:4px; margin-bottom:32px; }
+    .create-tab { flex:1; padding:12px; text-align:center; border-radius:var(--radius-md); font-family:'Rajdhani',sans-serif; font-size:15px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; cursor:pointer; color:var(--text-secondary); transition:all 0.2s; }
+    .create-tab.active { background:var(--gradient-button); color:#fff; }
+    .create-panel { display:none; }
+    .create-panel.active { display:block; animation:fade-up 0.3s ease; }
+    .field-hint { font-size:11px; color:var(--text-muted); margin-top:4px; }
+    .access-denied { text-align:center; padding:80px 24px; }
+    .access-denied-icon { font-size:80px; margin-bottom:20px; }
+    .access-denied h2 { font-family:'Orbitron',monospace; font-size:24px; margin-bottom:12px; }
+    .access-denied p { color:var(--text-secondary); font-size:15px; max-width:500px; margin:0 auto 28px; line-height:1.7; }
+    .preview-card { background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-xl); padding:20px; margin-bottom:16px; }
+    .preview-label { font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); margin-bottom:6px; }
+    .preview-value { font-size:14px; font-weight:600; color:var(--text-primary); }
+    .tag-input-wrapper { display:flex; flex-wrap:wrap; gap:6px; padding:8px; background:var(--bg-secondary); border:1px solid var(--border-color); border-radius:var(--radius-md); min-height:44px; align-items:center; }
+    .tag-input-wrapper input { flex:1; background:none; border:none; color:var(--text-primary); font-size:14px; outline:none; min-width:120px; }
+    .tag-badge { display:inline-flex; align-items:center; gap:4px; background:rgba(255,59,59,0.15); color:var(--apex-red); padding:3px 10px; border-radius:16px; font-size:12px; font-weight:600; }
+    .tag-badge .remove-tag { cursor:pointer; opacity:0.7; }
+    .tag-badge .remove-tag:hover { opacity:1; }
+  </style>
+</head>
+<body>
+
+<nav class="navbar" id="mainNav">
+  <div class="navbar-inner">
+    <a href="index.html" class="navbar-logo">
+      <img src="logo.png" alt="NaviApex">
+      <div class="navbar-logo-text">NAVI<span>APEX</span></div>
+    </a>
+    <div class="navbar-nav">
+      <a href="boosting.html" class="nav-link"><i class="fas fa-bolt"></i> Boosting</a>
+      <a href="accounts.html" class="nav-link"><i class="fas fa-shield-alt"></i> Accounts</a>
+      <a href="coaching.html" class="nav-link"><i class="fas fa-chalkboard-teacher"></i> Coaching</a>
+      <a href="sell.html" class="nav-link active"><i class="fas fa-tags"></i> Sell</a>
+    </div>
+    <div class="navbar-actions" id="navActions"></div>
+    <div class="hamburger" id="hamburger" onclick="toggleMobileNav()"><span></span><span></span><span></span></div>
+  </div>
+</nav>
+<div class="mobile-nav-overlay" id="mobileNav">
+  <a href="index.html" class="mobile-nav-link"><i class="fas fa-home"></i> Home</a>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ACCESS DENIED VIEW (hidden by default) -->
+<div id="accessDenied" style="display:none;">
+  <section class="section-sm">
+    <div class="container">
+      <div class="access-denied">
+        <div class="access-denied-icon">🔒</div>
+        <h2>Verified Sellers Only</h2>
+        <p>You need to be a verified seller to create listings on NaviApex. Apply as a booster, account seller, or coach first, and wait for approval.</p>
+        <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+          <a href="sell.html" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Apply to Sell</a>
+          <a href="dashboard.html" class="btn btn-secondary"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- VERIFIED SELLER VIEW -->
+<div id="sellerView" style="display:none;">
+
+  <!-- Hero -->
+  <section style="background:linear-gradient(135deg,#0a0a1f 0%,#1a0a20 100%); border-bottom:1px solid var(--border-color); padding:48px 0 32px;">
+    <div class="container">
+      <div style="display:flex; align-items:center; gap:16px; margin-bottom:12px;">
+        <a href="sell.html" style="color:var(--text-muted); font-size:14px;"><i class="fas fa-arrow-left"></i></a>
+        <div class="section-label">Create New Listing</div>
+      </div>
+      <h1 class="section-title" style="font-size:clamp(24px,3.5vw,38px); margin-bottom:8px;">
+        List Your <span class="text-gradient">Service</span>
+      </h1>
+      <p style="color:var(--text-secondary); font-size:15px; max-width:550px;">
+        Choose a category below and fill in the details. Your listing will go live on the marketplace after review.
+      </p>
+    </div>
+  </section>
+
+  <!-- Main Form Area -->
+  <section class="section-sm">
+    <div class="container">
+      <div style="display:grid; grid-template-columns:1fr 340px; gap:32px; align-items:start;">
+
+        <!-- Left: Category Tabs + Forms -->
+        <div>
+          <div class="create-tabs">
+            <div class="create-tab active" onclick="switchCreateTab('accounts')">🎮 Account</div>
+            <div class="create-tab" onclick="switchCreateTab('boosting')">⚡ Boosting</div>
+            <div class="create-tab" onclick="switchCreateTab('coaching')">🎯 Coaching</div>
+          </div>
+
+          <!-- ========== ACCOUNTS PANEL ========== -->
+          <div class="create-panel active" id="cpanel-accounts">
+            <h2 style="font-family:'Rajdhani',sans-serif; font-size:22px; font-weight:700; margin-bottom:6px;">List an Account</h2>
+            <p style="font-size:14px; color:var(--text-secondary); margin-bottom:24px;">Fill in all the account details. Be as detailed as possible to attract buyers.</p>
+
+            <form id="accountListingForm" onsubmit="submitListing(event,'accounts')">
+              <div class="form-group">
+                <label class="form-label">Account Title *</label>
+                <input type="text" class="form-input" id="acc_title" placeholder="e.g. Predator | Kunai Heirloom | 500+ Level | EA + Steam" required>
+                <div class="field-hint">Write a catchy title that highlights the best features of the account.</div>
+              </div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                <div class="form-group">
+                  <label class="form-label">Rank *</label>
+                  <select class="form-input form-select" id="acc_rank" required>
+                    <option value="">Select rank...</option>
+                    <option value="Bronze">Bronze</option>
+                    <option value="Silver">Silver</option>
+                    <option value="Gold">Gold</option>
+                    <option value="Platinum">Platinum</option>
+                    <option value="Diamond">Diamond</option>
+                    <option value="Master">Master</option>
+                    <option value="Predator">Predator</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Level *</label>
+                  <input type="number" class="form-input" id="acc_level" placeholder="e.g. 500" min="1" required>
+                </div>
+              </div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                <div class="form-group">
+                  <label class="form-label">Price (USD) *</label>
+                  <input type="number" class="form-input" id="acc_price" placeholder="e.g. 299" min="1" step="0.01" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Platform *</label>
+                  <select class="form-input form-select" id="acc_platform" required>
+                    <option value="">Select...</option>
+                    <option value="EA + Steam">EA + Steam</option>
+                    <option value="EA Only">EA Only</option>
+                    <option value="Steam Only">Steam Only</option>
+                    <option value="PlayStation">PlayStation</option>
+                    <option value="Xbox">Xbox</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                <div class="form-group">
+                  <label class="form-label">Number of Legendaries</label>
+                  <input type="number" class="form-input" id="acc_legendaries" placeholder="e.g. 210" min="0">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Heirloom(s)</label>
+                  <input type="text" class="form-input" id="acc_heirlooms" placeholder="e.g. Kunai, War Club">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Full Description *</label>
+                <textarea class="form-input" id="acc_desc" rows="8" placeholder="List everything about this account:&#10;&#10;• Heirlooms&#10;• Reactive Skins&#10;• Battle Passes&#10;• Badges&#10;• Special Items&#10;• Access type (Full email, etc.)" required></textarea>
+                <div class="field-hint">The more detail you provide, the more likely buyers will purchase.</div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Does it include OG Email? *</label>
+                <select class="form-input form-select" id="acc_ogemail" required>
+                  <option value="">Select...</option>
+                  <option value="Yes">Yes – Full OG Email Access</option>
+                  <option value="No">No</option>
+                </select>
+              </div>
+
+              <button type="submit" class="btn btn-primary" style="width:100%; padding:14px; margin-top:8px;">
+                <i class="fas fa-plus-circle"></i> Create Account Listing
+              </button>
+            </form>
+          </div>
+
+          <!-- ========== BOOSTING PANEL ========== -->
+          <div class="create-panel" id="cpanel-boosting">
+            <h2 style="font-family:'Rajdhani',sans-serif; font-size:22px; font-weight:700; margin-bottom:6px;">Create Boosting Service</h2>
+            <p style="font-size:14px; color:var(--text-secondary); margin-bottom:24px;">Set up your rank boosting offer. Buyers will see this on the Boosting page.</p>
+
+            <form id="boostListingForm" onsubmit="submitListing(event,'boosting')">
+              <div class="form-group">
+                <label class="form-label">Service Title *</label>
+                <input type="text" class="form-input" id="boost_title" placeholder="e.g. Predator Rank Boost – Fast & Safe" required>
+              </div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                <div class="form-group">
+                  <label class="form-label">Your Current/Peak Rank *</label>
+                  <select class="form-input form-select" id="boost_rank" required>
+                    <option value="">Select rank...</option>
+                    <option value="Diamond">Diamond</option>
+                    <option value="Master">Master</option>
+                    <option value="Predator">Predator</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Starting Price (USD / rank) *</label>
+                  <input type="number" class="form-input" id="boost_price" placeholder="e.g. 19.99" min="1" step="0.01" required>
+                </div>
+              </div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                <div class="form-group">
+                  <label class="form-label">K/D Ratio</label>
+                  <input type="text" class="form-input" id="boost_kd" placeholder="e.g. 4.2">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Estimated Completion</label>
+                  <select class="form-input form-select" id="boost_speed">
+                    <option value="1-2 days">1-2 days</option>
+                    <option value="2-3 days">2-3 days</option>
+                    <option value="3-5 days">3-5 days</option>
+                    <option value="5-7 days">5-7 days</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Description *</label>
+                <textarea class="form-input" id="boost_desc" rows="5" placeholder="Describe your boosting service:&#10;&#10;• What ranks can you boost to?&#10;• Do you play on the customer's account or with them?&#10;• Any guarantees?" required></textarea>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Boost Type</label>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                  <label style="display:flex; align-items:center; gap:6px; font-size:14px; cursor:pointer;">
+                    <input type="checkbox" id="boost_type_rank" checked> Rank Boost
+                  </label>
+                  <label style="display:flex; align-items:center; gap:6px; font-size:14px; cursor:pointer;">
+                    <input type="checkbox" id="boost_type_wins"> Win Boost
+                  </label>
+                  <label style="display:flex; align-items:center; gap:6px; font-size:14px; cursor:pointer;">
+                    <input type="checkbox" id="boost_type_kills"> Kill Boost
+                  </label>
+                  <label style="display:flex; align-items:center; gap:6px; font-size:14px; cursor:pointer;">
+                    <input type="checkbox" id="boost_type_badges"> Badge Boost
+                  </label>
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-primary" style="width:100%; padding:14px; margin-top:8px;">
+                <i class="fas fa-plus-circle"></i> Create Boosting Listing
+              </button>
+            </form>
+          </div>
+
+          <!-- ========== COACHING PANEL ========== -->
+          <div class="create-panel" id="cpanel-coaching">
+            <h2 style="font-family:'Rajdhani',sans-serif; font-size:22px; font-weight:700; margin-bottom:6px;">Create Coaching Service</h2>
+            <p style="font-size:14px; color:var(--text-secondary); margin-bottom:24px;">Offer your coaching expertise. Set your rate and describe what students will learn.</p>
+
+            <form id="coachListingForm" onsubmit="submitListing(event,'coaching')">
+              <div class="form-group">
+                <label class="form-label">Service Title *</label>
+                <input type="text" class="form-input" id="coach_title" placeholder="e.g. 1-on-1 Pro Coaching – Predator Level" required>
+              </div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                <div class="form-group">
+                  <label class="form-label">Your Rank *</label>
+                  <select class="form-input form-select" id="coach_rank" required>
+                    <option value="">Select rank...</option>
+                    <option value="Diamond">Diamond</option>
+                    <option value="Master">Master</option>
+                    <option value="Predator">Predator</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Price (USD / session) *</label>
+                  <input type="number" class="form-input" id="coach_price" placeholder="e.g. 24.99" min="1" step="0.01" required>
+                </div>
+              </div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                <div class="form-group">
+                  <label class="form-label">Session Duration</label>
+                  <select class="form-input form-select" id="coach_duration">
+                    <option value="30 min">30 minutes</option>
+                    <option value="1 hour" selected>1 hour</option>
+                    <option value="2 hours">2 hours</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">K/D Ratio</label>
+                  <input type="text" class="form-input" id="coach_kd" placeholder="e.g. 3.8">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Description *</label>
+                <textarea class="form-input" id="coach_desc" rows="5" placeholder="Describe your coaching:&#10;&#10;• What will students learn?&#10;• Your play style / legends&#10;• How sessions are conducted (Discord, etc.)" required></textarea>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Coaching Specialties</label>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                  <label style="display:flex; align-items:center; gap:6px; font-size:14px; cursor:pointer;">
+                    <input type="checkbox" id="coach_spec_aim" checked> Aim Training
+                  </label>
+                  <label style="display:flex; align-items:center; gap:6px; font-size:14px; cursor:pointer;">
+                    <input type="checkbox" id="coach_spec_gamesense"> Game Sense
+                  </label>
+                  <label style="display:flex; align-items:center; gap:6px; font-size:14px; cursor:pointer;">
+                    <input type="checkbox" id="coach_spec_ranked"> Ranked Strategy
+                  </label>
+                  <label style="display:flex; align-items:center; gap:6px; font-size:14px; cursor:pointer;">
+                    <input type="checkbox" id="coach_spec_movement"> Movement
+                  </label>
+                  <label style="display:flex; align-items:center; gap:6px; font-size:14px; cursor:pointer;">
+                    <input type="checkbox" id="coach_spec_vod"> VOD Review
+                  </label>
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-primary" style="width:100%; padding:14px; margin-top:8px;">
+                <i class="fas fa-plus-circle"></i> Create Coaching Listing
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Right Sidebar: Preview + Guidelines -->
+        <div>
+          <!-- Live Preview -->
+          <div style="background:var(--bg-card); border:1px solid rgba(255,59,59,0.2); border-radius:var(--radius-xl); padding:24px; margin-bottom:20px;">
+            <h3 style="font-family:'Rajdhani',sans-serif; font-size:18px; font-weight:700; margin-bottom:16px; color:var(--apex-red);">📋 Live Preview</h3>
+            <div id="livePreview">
+              <div style="text-align:center; padding:20px; color:var(--text-muted);">
+                <div style="font-size:32px; margin-bottom:8px;">✍️</div>
+                <div style="font-size:13px;">Start filling the form to see a live preview of your listing here.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Listing Guidelines -->
+          <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-xl); padding:24px; margin-bottom:20px;">
+            <h3 style="font-family:'Rajdhani',sans-serif; font-size:18px; font-weight:700; margin-bottom:16px;">📜 Listing Guidelines</h3>
+            <div style="display:flex; flex-direction:column; gap:10px; font-size:13px; color:var(--text-secondary);">
+              <div style="display:flex; gap:8px; align-items:flex-start;">
+                <span style="color:#00ff64;">✓</span>
+                <span>Be honest and accurate about account details</span>
+              </div>
+              <div style="display:flex; gap:8px; align-items:flex-start;">
+                <span style="color:#00ff64;">✓</span>
+                <span>Include all relevant features (heirlooms, skins, etc.)</span>
+              </div>
+              <div style="display:flex; gap:8px; align-items:flex-start;">
+                <span style="color:#00ff64;">✓</span>
+                <span>Set competitive pricing to attract more buyers</span>
+              </div>
+              <div style="display:flex; gap:8px; align-items:flex-start;">
+                <span style="color:var(--apex-red);">✗</span>
+                <span>Do not list stolen or shared accounts</span>
+              </div>
+              <div style="display:flex; gap:8px; align-items:flex-start;">
+                <span style="color:var(--apex-red);">✗</span>
+                <span>Do not exaggerate or misrepresent stats</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Platform Fee Info -->
+          <div style="background:rgba(255,215,0,0.05); border:1px solid rgba(255,215,0,0.2); border-radius:var(--radius-xl); padding:20px;">
+            <div style="font-size:13px; color:var(--apex-gold); font-weight:700; margin-bottom:8px;">💰 Platform Fee: 8%</div>
+            <div style="font-size:12px; color:var(--text-muted); line-height:1.6;">
+              NaviApex takes only an 8% fee on each completed sale. You keep 92% of every transaction. Payouts processed within 24 hours.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</div>
+
+<footer class="footer"><div class="container"><div class="footer-bottom"><div class="footer-copyright">© 2026 NaviApex · <a href="index.html" style="color:var(--apex-red);">Home</a></div><div class="footer-legal"><a href="#">Terms</a><a href="#">Seller Rules</a></div></div></div></footer>
+
+<script src="app.js"></script>
+<script>
+// ---- ACCESS CONTROL ----
+const user = getUser();
+if (!user) {
+  window.location.href = 'login.html';
+} else {
+  // Owner always has access; verified sellers have access
+  const isVerified = user.role === 'owner' || user.role === 'seller' || user.verified === true;
+  if (isVerified) {
+    document.getElementById('sellerView').style.display = 'block';
+  } else {
+    document.getElementById('accessDenied').style.display = 'block';
+  }
+}
+
+// ---- TAB SWITCHING ----
+function switchCreateTab(type) {
+  document.querySelectorAll('.create-tab').forEach((t, i) => {
+    const types = ['accounts', 'boosting', 'coaching'];
+    t.classList.toggle('active', types[i] === type);
+  });
+  document.querySelectorAll('.create-panel').forEach(p => {
+    p.classList.toggle('active', p.id === `cpanel-${type}`);
+  });
+  updatePreview();
+}
+
+// ---- LIVE PREVIEW ----
+function updatePreview() {
+  const activePanel = document.querySelector('.create-panel.active');
+  if (!activePanel) return;
+  
+  const preview = document.getElementById('livePreview');
+  const type = activePanel.id.replace('cpanel-', '');
+  
+  let title = '', price = '', rank = '';
+  
+  if (type === 'accounts') {
+    title = document.getElementById('acc_title')?.value || '';
+    price = document.getElementById('acc_price')?.value || '';
+    rank = document.getElementById('acc_rank')?.value || '';
+  } else if (type === 'boosting') {
+    title = document.getElementById('boost_title')?.value || '';
+    price = document.getElementById('boost_price')?.value || '';
+    rank = document.getElementById('boost_rank')?.value || '';
+  } else if (type === 'coaching') {
+    title = document.getElementById('coach_title')?.value || '';
+    price = document.getElementById('coach_price')?.value || '';
+    rank = document.getElementById('coach_rank')?.value || '';
+  }
+  
+  if (!title && !price) {
+    preview.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-muted);">
+      <div style="font-size:32px; margin-bottom:8px;">✍️</div>
+      <div style="font-size:13px;">Start filling the form to see a live preview.</div>
+    </div>`;
+    return;
+  }
+  
+  const icons = { accounts: '🎮', boosting: '⚡', coaching: '🎯' };
+  const labels = { accounts: 'Account', boosting: 'Boosting', coaching: 'Coaching' };
+  
+  preview.innerHTML = `
+    <div style="background:var(--bg-surface); border:1px solid var(--border-color); border-radius:var(--radius-lg); padding:16px;">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+        <span style="font-size:20px;">${icons[type]}</span>
+        <span class="specialty-tag" style="font-size:11px;">${labels[type]}</span>
+        ${rank ? `<span class="specialty-tag" style="font-size:11px; background:rgba(255,215,0,0.1); color:var(--apex-gold);">${rank}</span>` : ''}
+      </div>
+      <div style="font-size:14px; font-weight:700; margin-bottom:8px; line-height:1.4;">${title || 'Untitled Listing'}</div>
+      <div style="display:flex; align-items:center; justify-content:space-between;">
+        <div style="font-family:'Orbitron',monospace; font-size:18px; font-weight:800; color:var(--apex-red);">
+          ${price ? '$' + parseFloat(price).toFixed(2) : '$—'}
+        </div>
+        <div style="font-size:11px; color:var(--text-muted);">by ${user?.username || 'You'}</div>
+      </div>
+    </div>
+  `;
+}
+
+// Attach live preview listeners to all inputs
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('#sellerView input, #sellerView select, #sellerView textarea').forEach(el => {
+    el.addEventListener('input', updatePreview);
+    el.addEventListener('change', updatePreview);
+  });
+});
+
+// ---- SUBMIT LISTING ----
+function submitListing(e, type) {
+  e.preventDefault();
+  
+  let title, price, attributes = {};
+  
+  if (type === 'accounts') {
+    title = document.getElementById('acc_title').value.trim();
+    price = parseFloat(document.getElementById('acc_price').value);
+    attributes = {
+      rank: document.getElementById('acc_rank').value,
+      level: parseInt(document.getElementById('acc_level').value),
+      platform: document.getElementById('acc_platform').value,
+      legendaries: document.getElementById('acc_legendaries').value,
+      heirlooms: document.getElementById('acc_heirlooms').value,
+      description: document.getElementById('acc_desc').value,
+      ogEmail: document.getElementById('acc_ogemail').value
+    };
+  } else if (type === 'boosting') {
+    title = document.getElementById('boost_title').value.trim();
+    price = parseFloat(document.getElementById('boost_price').value);
+    attributes = {
+      rank: document.getElementById('boost_rank').value,
+      kd: document.getElementById('boost_kd').value,
+      speed: document.getElementById('boost_speed').value,
+      description: document.getElementById('boost_desc').value,
+      types: []
+    };
+    if (document.getElementById('boost_type_rank').checked) attributes.types.push('Rank Boost');
+    if (document.getElementById('boost_type_wins').checked) attributes.types.push('Win Boost');
+    if (document.getElementById('boost_type_kills').checked) attributes.types.push('Kill Boost');
+    if (document.getElementById('boost_type_badges').checked) attributes.types.push('Badge Boost');
+  } else if (type === 'coaching') {
+    title = document.getElementById('coach_title').value.trim();
+    price = parseFloat(document.getElementById('coach_price').value);
+    attributes = {
+      rank: document.getElementById('coach_rank').value,
+      kd: document.getElementById('coach_kd').value,
+      duration: document.getElementById('coach_duration').value,
+      description: document.getElementById('coach_desc').value,
+      specialties: []
+    };
+    if (document.getElementById('coach_spec_aim').checked) attributes.specialties.push('Aim Training');
+    if (document.getElementById('coach_spec_gamesense').checked) attributes.specialties.push('Game Sense');
+    if (document.getElementById('coach_spec_ranked').checked) attributes.specialties.push('Ranked Strategy');
+    if (document.getElementById('coach_spec_movement').checked) attributes.specialties.push('Movement');
+    if (document.getElementById('coach_spec_vod').checked) attributes.specialties.push('VOD Review');
+  }
+  
+  const listing = addListing({ type, title, price, attributes });
+  showToast(`Listing "${title}" created successfully! It will be live after review. 🎉`, 'success');
+  e.target.reset();
+  updatePreview();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NaviApex (Owner) - Seller Profile | NaviApex</title>
+  <meta name="description" content="View the seller profile, stats, and listings for NaviApex (Owner).">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body { padding-top: calc(var(--nav-height) + 42px); }
+    
+    /* Seller Hero Header */
+    .seller-header { 
+      background:linear-gradient(135deg,#0a0a0f 0%,#150000 100%); 
+      border-bottom:1px solid var(--border-color); 
+      padding:60px 0 40px; 
+      position:relative; 
+      overflow:hidden; 
+    }
+    .seller-header::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:4px;
+      background:var(--gradient-button);
+    }
+    
+    .profile-card {
+      display:flex; gap:32px; align-items:center; flex-wrap:wrap;
+      background:rgba(255,255,255,0.02);
+      border:1px solid var(--border-color);
+      border-radius:var(--radius-xl);
+      padding:32px;
+      backdrop-filter:blur(10px);
+    }
+    .profile-avatar-wrapper { position:relative; }
+    .profile-avatar {
+      width:120px; height:120px; border-radius:50%;
+      background:var(--gradient-gold);
+      color:#fff; display:flex; align-items:center; justify-content:center;
+      font-size:48px; font-weight:800; font-family:'Orbitron',monospace;
+      border:4px solid var(--bg-body);
+      box-shadow:0 0 30px rgba(255,215,0,0.3);
+    }
+    .online-indicator {
+      position:absolute; bottom:8px; right:8px; width:20px; height:20px;
+      background:#00ff64; border-radius:50%; border:4px solid var(--bg-body);
+    }
+    .profile-info { flex:1; min-width:300px; }
+    .profile-name { font-family:'Rajdhani',sans-serif; font-size:32px; font-weight:800; margin-bottom:4px; display:flex; align-items:center; gap:10px; color:#fff; }
+    .verified-badge { color:var(--apex-gold); font-size:18px; }
+    .profile-tags { display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap; }
+    .tag-rank { background:rgba(255,59,59,0.1); color:var(--apex-red); border:1px solid rgba(255,59,59,0.2); padding:4px 12px; border-radius:12px; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; }
+    .tag-owner { background:rgba(255,215,0,0.1); color:var(--apex-gold); border:1px solid rgba(255,215,0,0.2); padding:4px 12px; border-radius:12px; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; }
+    
+    .profile-stats { display:flex; gap:24px; flex-wrap:wrap; }
+    .stat-item { text-align:center; }
+    .stat-val { font-family:'Orbitron',monospace; font-size:24px; font-weight:700; color:#fff; }
+    .stat-label { font-size:12px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-top:4px; }
+    
+    /* Bio */
+    .bio-section { margin-top:32px; padding-top:32px; border-top:1px solid var(--border-color); }
+    .bio-title { font-family:'Rajdhani',sans-serif; font-size:20px; font-weight:700; margin-bottom:12px; color:#fff; }
+    .bio-text { font-size:15px; color:var(--text-secondary); line-height:1.7; max-width:800px; }
+
+    /* Tabs */
+    .listing-tabs { display:flex; gap:8px; margin-bottom:32px; overflow-x:auto; padding-bottom:4px; }
+    .tab-btn { background:var(--bg-card); border:1px solid var(--border-color); color:var(--text-secondary); padding:10px 24px; border-radius:var(--radius-lg); font-size:14px; font-weight:600; cursor:pointer; transition:all 0.2s; white-space:nowrap; }
+    .tab-btn:hover { background:rgba(255,255,255,0.05); color:#fff; }
+    .tab-btn.active { background:var(--apex-red); border-color:var(--apex-red); color:#fff; box-shadow:0 4px 15px rgba(255,59,59,0.3); }
+
+    /* Reusing card classes from accounts/boosting/coaching */
+    .listings-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(310px,1fr)); gap:24px; }
+    
+    .acc-card { background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-xl); overflow:hidden; transition:all 0.3s ease; position:relative; display:flex; flex-direction:column; cursor:pointer; }
+    .acc-card:hover { transform:translateY(-6px); box-shadow:var(--shadow-card); border-color:var(--text-muted); }
+    .acc-img-wrapper { height:160px; position:relative; overflow:hidden; background:#000; }
+    .acc-img { width:100%; height:100%; object-fit:cover; opacity:0.6; transition:opacity 0.3s; }
+    .acc-card:hover .acc-img { opacity:1; }
+    .acc-badge { position:absolute; top:12px; right:12px; font-size:11px; font-weight:700; padding:4px 12px; border-radius:20px; letter-spacing:1px; text-transform:uppercase; z-index:2; }
+    .badge-hot { background:var(--gradient-button); color:#fff; box-shadow:0 2px 10px rgba(255,59,59,0.4); }
+    .badge-master { background:var(--gradient-purple); color:#fff; }
+    .acc-content { padding:20px; flex:1; display:flex; flex-direction:column; }
+    .acc-title { font-family:'Rajdhani',sans-serif; font-size:18px; font-weight:700; line-height:1.3; margin-bottom:12px; color:#fff; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+    .acc-features { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px; }
+    .acc-feature { font-size:11px; background:rgba(255,255,255,0.05); color:var(--text-secondary); padding:4px 8px; border-radius:4px; }
+    .acc-footer { margin-top:auto; padding-top:16px; border-top:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center; }
+    .acc-price { font-family:'Orbitron',monospace; font-size:22px; font-weight:700; color:var(--apex-gold); }
+    
+    .booster-card { background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-xl); padding:24px; transition:all 0.3s; }
+    .booster-card:hover { transform:translateY(-4px); box-shadow:var(--shadow-card); border-color:var(--text-muted); }
+    .booster-card-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px; }
+    .booster-name { font-family:'Rajdhani',sans-serif; font-size:20px; font-weight:700; color:#fff; display:flex; align-items:center; gap:8px; }
+    .booster-rank { font-size:12px; background:rgba(255,59,59,0.1); color:var(--apex-red); padding:4px 8px; border-radius:4px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; }
+    .booster-stats { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px; }
+    .booster-stat { font-size:13px; color:var(--text-secondary); }
+    .booster-stat strong { color:#fff; font-size:15px; }
+
+    .coach-card { background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-xl); padding:24px; transition:all 0.3s; display:flex; flex-direction:column; cursor:pointer;}
+    .coach-card:hover { transform:translateY(-6px); box-shadow:var(--shadow-card); border-color:var(--text-muted); }
+    .coach-header { display:flex; gap:16px; align-items:center; margin-bottom:16px; position:relative; }
+    .coach-avatar { width:48px; height:48px; background:var(--gradient-gold); border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; color:#fff; flex-shrink:0; }
+    .coach-info { flex:1; }
+    .coach-name { font-family:'Rajdhani',sans-serif; font-size:18px; font-weight:700; color:#fff; margin-bottom:4px; }
+    .coach-rank-badge { display:inline-block; font-size:10px; font-weight:700; padding:2px 8px; border-radius:12px; text-transform:uppercase; letter-spacing:0.5px; }
+    .coach-rank-badge.predator { background:rgba(255,59,59,0.1); color:var(--apex-red); }
+    .coach-stats-row { display:flex; gap:12px; font-size:12px; color:var(--text-secondary); margin-top:8px; }
+    .coach-specialties { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px; }
+    .specialty-tag { background:rgba(255,255,255,0.05); color:var(--text-secondary); padding:4px 10px; border-radius:20px; font-size:11px; font-weight:600; }
+    .coach-price { font-family:'Orbitron',monospace; font-size:20px; font-weight:700; color:var(--apex-gold); }
+    .coach-price-unit { font-size:12px; color:var(--text-muted); font-family:'Inter',sans-serif; font-weight:400; }
+  </style>
+</head>
+<body>
+
+<nav class="navbar" id="mainNav">
+  <div class="navbar-inner">
+    <a href="index.html" class="navbar-logo">
+      <img src="logo.png" alt="NaviApex">
+      <div class="navbar-logo-text">NAVI<span>APEX</span></div>
+    </a>
+    <div class="navbar-nav">
+      <a href="boosting.html" class="nav-link"><i class="fas fa-bolt"></i> Boosting</a>
+      <a href="accounts.html" class="nav-link"><i class="fas fa-shield-alt"></i> Accounts</a>
+      <a href="coaching.html" class="nav-link"><i class="fas fa-chalkboard-teacher"></i> Coaching</a>
+      <a href="sell.html" class="nav-link"><i class="fas fa-tags"></i> Sell</a>
+    </div>
+    <div class="navbar-actions" id="navActions"></div>
+    <div class="hamburger" id="hamburger" onclick="toggleMobileNav()"><span></span><span></span><span></span></div>
+  </div>
+</nav>
+<div class="mobile-nav-overlay" id="mobileNav">
+  <a href="index.html" class="mobile-nav-link"><i class="fas fa-home"></i> Home</a>
+  <a href="boosting.html" class="mobile-nav-link"><i class="fas fa-bolt"></i> Boosting</a>
+  <a href="accounts.html" class="mobile-nav-link"><i class="fas fa-shield-alt"></i> Accounts</a>
+  <a href="coaching.html" class="mobile-nav-link"><i class="fas fa-chalkboard-teacher"></i> Coaching</a>
+  <a href="sell.html" class="mobile-nav-link"><i class="fas fa-tags"></i> Sell</a>
+</div>
+
+<section class="seller-header">
+  <div class="container">
+    <div class="profile-card">
+      <div class="profile-avatar-wrapper">
+        <div class="profile-avatar">NA</div>
+        <div class="online-indicator" title="Online Now"></div>
+      </div>
+      
+      <div class="profile-info">
+        <div class="profile-name">
+          NaviApex (Owner) 
+          <i class="fas fa-check-circle verified-badge" title="Verified Owner"></i>
+        </div>
+        <div class="profile-tags">
+          <span class="tag-rank"><i class="fas fa-medal"></i> Predator Rank</span>
+          <span class="tag-owner"><i class="fas fa-crown"></i> Platform Owner</span>
+        </div>
+        <div class="profile-stats">
+          <div class="stat-item">
+            <div class="stat-val">5.0 <span style="color:var(--apex-gold); font-size:18px;">★</span></div>
+            <div class="stat-label">Average Rating</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-val">100%</div>
+            <div class="stat-label">Completion Rate</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-val">1000+</div>
+            <div class="stat-label">Total Orders</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-val" style="font-size:18px; margin-top:5px;">Since 2023</div>
+            <div class="stat-label">Member</div>
+          </div>
+        </div>
+      </div>
+      
+      <div style="text-align:right;">
+        <button class="btn btn-primary" onclick="showToast('Messaging will be available soon!', 'info')">
+          <i class="fas fa-comment-alt"></i> Message Seller
+        </button>
+      </div>
+    </div>
+    
+    <div class="bio-section">
+      <h3 class="bio-title">About NaviApex</h3>
+      <p class="bio-text">
+        Welcome to my official NaviApex Seller Profile. As the owner of the platform and a consistent Predator since Season 4, I provide the highest quality Apex Legends services available. Whether you need a premium hand-leveled account with OG skins, a rapid secure rank boost, or 1-on-1 coaching to perfect your mechanics, I guarantee 100% safety, immediate delivery, and professional service.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="listing-tabs">
+      <button class="tab-btn active" onclick="filterListings('all', this)">All Listings (4)</button>
+      <button class="tab-btn" onclick="filterListings('accounts', this)">Accounts (2)</button>
+      <button class="tab-btn" onclick="filterListings('boosting', this)">Boosting (1)</button>
+      <button class="tab-btn" onclick="filterListings('coaching', this)">Coaching (1)</button>
+    </div>
+    
+    <div class="listings-grid" id="sellerListingsGrid">
+      <!-- Injected by JS -->
+    </div>
+  </div>
+</section>
+
+<div class="toast-container" id="toastContainer"></div>
+<footer class="footer"><div class="container"><div class="footer-bottom"><div class="footer-copyright">© 2026 NaviApex · <a href="index.html" style="color:var(--apex-red);">Home</a></div><div class="footer-legal"><a href="#">Terms</a><a href="#">Privacy</a></div></div></div></footer>
+
+<script src="app.js"></script>
+<script>
+const sellerListings = [
+  {
+    type: 'accounts',
+    id: 7, 
+    title:'Diamond 1 | Sky Piercer Universal Heirloom | Level 508 | 195 Legendries | Reactive Skins | Steam + EA', 
+    price:299.00, 
+    badge:'Premium', badgeClass:'badge-hot',
+    features:['OG Skins', 'All Battle Passes', 'Heirloom', 'Full Mail Access']
+  },
+  {
+    type: 'accounts',
+    id: 8, 
+    title:'Gibraltor Heirloom | Masters Animated Badge | Brudda Bear | Ranked Ladder Champ | 210 Legendries | 554 Level | EA + STEAM', 
+    price:270.00, 
+    badge:'Premium', badgeClass:'badge-master',
+    features:['OG Skins', 'All Battle Passes', 'Heirloom', 'Full Mail Access']
+  },
+  {
+    type: 'boosting',
+    title: 'Rank Boosting / Badge Farming',
+    rank: 'Predator',
+    price: 19.99,
+    orders: 524,
+    rating: 4.9,
+    kd: 8.4
+  },
+  {
+    type: 'coaching',
+    title: '1-on-1 Pro Coaching',
+    rank: 'Predator',
+    price: 24.99,
+    rating: 5.0,
+    sessions: 487,
+    specialties: ['Aim', 'Movement', 'Game Sense']
+  }
+];
+
+function filterListings(category, btnEl) {
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  btnEl.classList.add('active');
+  
+  const filtered = category === 'all' ? sellerListings : sellerListings.filter(l => l.type === category);
+  renderGrid(filtered);
+}
+
+function renderGrid(items) {
+  const grid = document.getElementById('sellerListingsGrid');
+  grid.innerHTML = items.map(item => {
+    if (item.type === 'accounts') {
+      return \`
+        <div class="acc-card" onclick="window.location.href='accounts.html'">
+          <div class="acc-img-wrapper">
+            <div class="acc-badge \${item.badgeClass}">\${item.badge}</div>
+          </div>
+          <div class="acc-content">
+            <h3 class="acc-title">\${item.title}</h3>
+            <div class="acc-features">
+              \${item.features.map(f => \`<span class="acc-feature">\${f}</span>\`).join('')}
+            </div>
+            <div class="acc-footer">
+              <span style="font-size:12px; color:var(--text-muted);">Instant Delivery</span>
+              <div class="acc-price">$\${item.price.toFixed(2)}</div>
+            </div>
+          </div>
+        </div>
+      \`;
+    } else if (item.type === 'boosting') {
+      return \`
+        <div class="booster-card" style="cursor:pointer;" onclick="window.location.href='boosting.html'">
+          <div class="booster-card-header">
+            <div>
+              <div class="booster-name">NaviApex (Owner) <i class="fas fa-check-circle" style="color:var(--apex-gold); font-size:14px;"></i></div>
+              <div style="font-size:13px; color:var(--text-secondary); margin-top:4px;">Rank Boosting Service</div>
+            </div>
+            <div class="booster-rank">🔴 \${item.rank}</div>
+          </div>
+          <div class="booster-stats">
+            <div class="booster-stat">⭐ <strong>\${item.rating}</strong> (Rating)</div>
+            <div class="booster-stat">📦 <strong>\${item.orders}</strong> (Orders)</div>
+            <div class="booster-stat">🎯 <strong>\${item.kd}</strong> (K/D Ratio)</div>
+            <div class="booster-stat">💸 <strong>From $\${item.price}</strong></div>
+          </div>
+          <button class="btn btn-secondary" style="width:100%;">View Services</button>
+        </div>
+      \`;
+    } else if (item.type === 'coaching') {
+      return \`
+        <div class="coach-card" style="cursor:pointer;" onclick="window.location.href='coaching.html'">
+          <div class="coach-header">
+            <div class="coach-avatar">NA</div>
+            <div class="coach-info">
+              <div class="coach-name">NaviApex (Owner)</div>
+              <div class="coach-rank-badge predator">🔴 \${item.rank}</div>
+              <div class="coach-stats-row">
+                <span>⭐ \${item.rating}</span>
+                <span>📚 \${item.sessions} sessions</span>
+              </div>
+            </div>
+          </div>
+          <div style="flex:1;">
+            <div class="coach-specialties" style="margin-top:8px;">
+              \${item.specialties.map(s => \`<span class="specialty-tag">\${s}</span>\`).join('')}
+            </div>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px; border-top:1px solid var(--border-color); padding-top:16px;">
+            <div class="coach-price">$\${item.price.toFixed(2)}<span class="coach-price-unit">/hr</span></div>
+            <button class="btn btn-primary btn-sm">Book Session</button>
+          </div>
+        </div>
+      \`;
+    }
+  }).join('');
+}
+
+// Initial render
+renderGrid(sellerListings);
+</script>
+</body>
+</html>

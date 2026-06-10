@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apex Legends Accounts – NaviApex Marketplace</title>
+  <meta name="description" content="Buy and sell verified Apex Legends accounts. Rare skins, high KD, Masters/Predator accounts available.">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body { padding-top: calc(var(--nav-height) + 42px); }
+    .page-hero { background: linear-gradient(135deg, #00101a 0%, #0a0a0f 60%); border-bottom:1px solid var(--border-color); padding:60px 0 40px; position:relative; overflow:hidden; }
+    .account-detail-grid { display:grid; grid-template-columns:1fr 340px; gap:32px; align-items:start; }
+    .account-features { display:flex; flex-wrap:wrap; gap:8px; margin:16px 0; }
+    .account-feature-tag { display:flex; align-items:center; gap:6px; background:rgba(0,212,255,0.08); border:1px solid rgba(0,212,255,0.2); color:var(--neon-blue); padding:4px 12px; border-radius:4px; font-size:12px; font-weight:600; }
+    .sidebar-filter { background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-xl); padding:24px; margin-bottom:20px; }
+    .filter-title { font-family:'Rajdhani',sans-serif; font-size:15px; font-weight:700; margin-bottom:14px; text-transform:uppercase; letter-spacing:0.5px; }
+    .filter-option { display:flex; align-items:center; gap:10px; padding:8px 0; font-size:14px; color:var(--text-secondary); cursor:pointer; transition:color 0.2s; }
+    .filter-option:hover { color:#fff; }
+    .filter-option input { accent-color:var(--apex-red); }
+    .range-inputs { display:flex; gap:8px; align-items:center; }
+    .range-input { width:100%; background:var(--bg-surface); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:8px 12px; font-size:13px; color:var(--text-primary); }
+    .range-input:focus { border-color:var(--apex-red); }
+  </style>
+</head>
+<body>
+
+<nav class="navbar" id="mainNav">
+  <div class="navbar-inner">
+    <a href="index.html" class="navbar-logo">
+      <img src="logo.png" alt="NaviApex">
+      <div class="navbar-logo-text">NAVI<span>APEX</span></div>
+    </a>
+    <div class="navbar-nav">
+      <a href="boosting.html" class="nav-link"><i class="fas fa-bolt"></i> Boosting</a>
+      <a href="accounts.html" class="nav-link active"><i class="fas fa-shield-alt"></i> Accounts</a>
+      <a href="coaching.html" class="nav-link"><i class="fas fa-chalkboard-teacher"></i> Coaching</a>
+      <a href="sell.html" class="nav-link"><i class="fas fa-tags"></i> Sell</a>
+    </div>
+    <div class="navbar-actions" id="navActions"></div>
+    <div class="hamburger" id="hamburger" onclick="toggleMobileNav()"><span></span><span></span><span></span></div>
+  </div>
+</nav>
+<div class="category-bar">
+  <div class="category-bar-inner">
+    <a class="cat-link active" href="accounts.html">🎮 All Accounts</a>
+    <a class="cat-link" href="#" onclick="filterByRank('predator')">🔴 Predator</a>
+    <a class="cat-link" href="#" onclick="filterByRank('master')">👑 Master</a>
+    <a class="cat-link" href="#" onclick="filterByRank('diamond')">💠 Diamond</a>
+    <a class="cat-link" href="#" onclick="filterByRank('og')">⭐ OG Skins</a>
+  </div>
+</div>
+<div class="mobile-nav-overlay" id="mobileNav">
+  <a href="index.html" class="mobile-nav-link"><i class="fas fa-home"></i> Home</a>
+  <a href="boosting.html" class="mobile-nav-link"><i class="fas fa-bolt"></i> Boosting</a>
+  <a href="accounts.html" class="mobile-nav-link"><i class="fas fa-shield-alt"></i> Accounts</a>
+</div>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="container">
+    <div class="section-label">Account Marketplace</div>
+    <h1 class="section-title" style="font-size:clamp(28px,4vw,48px); margin-bottom:12px;">
+      Buy & Sell <span class="text-gradient">Apex Accounts</span>
+    </h1>
+    <p style="color:var(--text-secondary); font-size:16px; max-width:600px;">
+      Browse thousands of verified Apex Legends accounts. From rare OG skins to Predator-ranked smurfs — safe, instant delivery.
+    </p>
+  </div>
+</section>
+
+<!-- MAIN CONTENT -->
+<section class="section-sm">
+  <div class="container">
+    <div style="display:grid; grid-template-columns:260px 1fr; gap:28px; align-items:start;">
+
+      <!-- Sidebar Filters -->
+      <div>
+        <div class="sidebar-filter">
+          <div class="filter-title">🏆 Rank</div>
+          <label class="filter-option"><input type="checkbox" value="predator" onchange="applyFilters()"> 🔴 Predator</label>
+          <label class="filter-option"><input type="checkbox" value="master" onchange="applyFilters()"> 👑 Master</label>
+          <label class="filter-option"><input type="checkbox" value="diamond" onchange="applyFilters()"> 💠 Diamond</label>
+          <label class="filter-option"><input type="checkbox" value="platinum" onchange="applyFilters()"> 💎 Platinum</label>
+          <label class="filter-option"><input type="checkbox" value="gold" onchange="applyFilters()"> 🥇 Gold</label>
+        </div>
+
+        <div class="sidebar-filter">
+          <div class="filter-title">💰 Price Range</div>
+          <div class="range-inputs">
+            <input type="number" class="range-input" id="minPrice" placeholder="Min" min="0" onchange="applyFilters()">
+            <span style="color:var(--text-muted);">—</span>
+            <input type="number" class="range-input" id="maxPrice" placeholder="Max" onchange="applyFilters()">
+          </div>
+        </div>
+
+        <div class="sidebar-filter">
+          <div class="filter-title">⭐ Features</div>
+          <label class="filter-option"><input type="checkbox" value="og" onchange="applyFilters()"> OG Skins</label>
+          <label class="filter-option"><input type="checkbox" value="battlepass" onchange="applyFilters()"> All Battle Passes</label>
+          <label class="filter-option"><input type="checkbox" value="level500" onchange="applyFilters()"> Level 500+</label>
+          <label class="filter-option"><input type="checkbox" value="fullmail" onchange="applyFilters()"> Full Email Access</label>
+        </div>
+
+        <div class="sidebar-filter">
+          <div class="filter-title">🌍 Region</div>
+          <label class="filter-option"><input type="checkbox" value="na"> North America</label>
+          <label class="filter-option"><input type="checkbox" value="eu"> Europe</label>
+          <label class="filter-option"><input type="checkbox" value="asia"> Asia Pacific</label>
+        </div>
+
+        <button class="btn btn-secondary" style="width:100%;" onclick="clearFilters()">
+          <i class="fas fa-times"></i> Clear Filters
+        </button>
+      </div>
+
+      <!-- Listings -->
+      <div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
+          <div style="font-size:14px; color:var(--text-secondary);" id="resultsCount">Showing all accounts</div>
+          <div style="display:flex; gap:10px; align-items:center;">
+            <input type="text" class="search-input" id="accountSearch" placeholder="🔍 Search accounts..." style="width:220px;" oninput="applyFilters()">
+            <select class="sort-select" onchange="applyFilters();" id="accountSort">
+              <option value="featured">Featured</option>
+              <option value="price-low">Price: Low → High</option>
+              <option value="price-high">Price: High → Low</option>
+              <option value="rating">Top Rated</option>
+              <option value="newest">Newest</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="listings-grid" id="accountsGrid"></div>
+
+        <div style="text-align:center; margin-top:40px;">
+          <button class="btn btn-secondary" onclick="showToast('Loading more accounts...', 'info')">
+            Load More Accounts
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Account Detail Modal -->
+<div class="modal-overlay" id="accountModal">
+  <div class="modal" style="max-width:640px;">
+    <div class="modal-header">
+      <div class="modal-title" id="modalAccountTitle">Account Details</div>
+      <button class="modal-close" onclick="closeModal('accountModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body" id="modalAccountBody"></div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+<footer class="footer"><div class="container"><div class="footer-bottom"><div class="footer-copyright">© 2026 NaviApex · <a href="index.html" style="color:var(--apex-red);">Home</a></div><div class="footer-legal"><a href="#">Terms</a><a href="#">Privacy</a></div></div></div></footer>
+
+<script src="app.js"></script>
+<script src="paypal.js"></script>
+<script>
+const accountListings = [
+  { id:7, title:'Diamond 1 | Sky Piercer Universal Heirloom | Level 508 | 195 Legendries | Reactive Skins | Steam + EA', rank:'diamond', rankLabel:'Diamond 1', rankIcon:'💠', level:508, price:299.00, rating:5.0, reviews:0, seller:'NaviApex (Owner)', si:'NA', delivery:'Instant', features:['level500', 'fullmail', 'battlepass', 'og'], desc:'Sky Piercer Universal Heirloom\\nLevel 508\\n195 Legendries\\n\\nFlatline Reactive Skin - 1 (Overheat)\\nP2020 Reactive Skin - 1\\nAlternator Reactive Skin - 1\\nNemesis Reactive Skin - 1\\n30-30 Reactive Skins - 2\\nBocek Reactive Skin - 1 (S28 BP)\\n\\nS21 BP MAX\\nS22 BP MAX\\nS24 Both Split BP MAX\\nS25 BP MAX\\nS28 Both Split BP MAX', badge:'Premium', badgeClass:'badge-hot' },
+  { id:8, title:'Gibraltor Heirloom | Masters Animated Badge | Brudda Bear | Ranked Ladder Champ | 210 Legendries | 554 Level | EA + STEAM', rank:'master', rankLabel:'Master', rankIcon:'👑', level:554, price:270.00, rating:5.0, reviews:0, seller:'NaviApex (Owner)', si:'NA', delivery:'Instant', features:['level500', 'fullmail', 'battlepass', 'og'], desc:'550+ Level\\n7000+ Career Kills\\n1.56 K/DR\\n210 Legendries\\nGibraltor Heirloom\\n\\nRanked Ladder Champion Dive Trail (Usable For Ranked Season 29 Split 1)\\n\\nS15 BP MAX\\nS16 BP MAX\\nS17 BP MAX\\nS17 BP MAX\\nS19 BP MAX\\n\\nSeason 17 Masters Rank Animated Badge\\n\\nMastiff 2 Reactive Skins\\nEva-8 2 Reactive Skins\\nCharge Rifle 2 Reactive Skins\\nRampage 2 Reactive Skins\\nC.A.R 2 Reactive Skins\\n\\nR-99 Reactive Skin\\n\\nBrudda Bear Skin Gibraltor\\nStarlightspeed Octane Skin\\nAnicent Of The Void Wraith Skin', badge:'Premium', badgeClass:'badge-master' },
+];
+
+let filteredAccounts = [...accountListings];
+
+function renderAccounts(accounts) {
+  const grid = document.getElementById('accountsGrid');
+  document.getElementById('resultsCount').textContent = `Showing ${accounts.length} account${accounts.length !== 1 ? 's' : ''}`;
+  if (accounts.length === 0) {
+    grid.innerHTML = '<div style="text-align:center; padding:60px; color:var(--text-muted); grid-column:1/-1;"><div style="font-size:48px; margin-bottom:16px;">😔</div><div style="font-size:18px;">No accounts match your filters</div><div style="font-size:14px; margin-top:8px;">Try adjusting your filters or search</div></div>';
+    return;
+  }
+  grid.innerHTML = accounts.map(acc => `
+    <div class="offer-card" onclick="openAccountModal(${acc.id})">
+      <div class="offer-card-img" style="background:linear-gradient(135deg,#1a1030,#0a0a1f);">
+        <div style="display:flex; align-items:center; justify-content:center; height:100%; font-size:64px;">${acc.rankIcon}</div>
+        <div class="offer-card-badge ${acc.badgeClass}">${acc.badge}</div>
+      </div>
+      <div class="offer-card-body">
+        <div class="offer-seller">
+          <a href="seller-profile.html" onclick="event.stopPropagation()" style="display:flex; align-items:center; gap:8px; text-decoration:none; color:inherit;">
+            <div class="seller-avatar">${acc.si}</div>
+            <span class="seller-name">${acc.seller}</span>
+            <span class="seller-verified" title="Verified">✓</span>
+          </a>
+        </div>
+        <h3 class="offer-title">${acc.title}</h3>
+        <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:10px;">
+          <span style="font-size:12px; color:var(--text-muted);">Lv.${acc.level}</span>
+          ${acc.kd ? `<span style="font-size:12px; color:var(--text-muted);">🎯 ${acc.kd} K/D</span>` : ''}
+          ${acc.kills ? `<span style="font-size:12px; color:var(--text-muted);">💀 ${acc.kills.toLocaleString()} kills</span>` : ''}
+        </div>
+        <div class="offer-meta">
+          <span class="offer-rating">★ ${acc.rating}</span>
+          <span>(${acc.reviews})</span>
+          <span>• ${acc.delivery}</span>
+        </div>
+        <div class="offer-footer">
+          <div>
+            <div class="offer-price">$${acc.price}</div>
+            <div class="offer-price-sub">Full account</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); buyAccount(${acc.id})">Buy Now</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openAccountModal(id) {
+  const acc = accountListings.find(a => a.id === id);
+  document.getElementById('modalAccountTitle').textContent = acc.title;
+  document.getElementById('modalAccountBody').innerHTML = `
+    <div style="text-align:center; font-size:72px; margin-bottom:16px;">${acc.rankIcon}</div>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:20px;">
+      <div style="background:var(--bg-surface); border-radius:var(--radius-md); padding:12px; text-align:center;">
+        <div style="font-size:20px; font-weight:700; color:var(--apex-red);">${acc.level}</div>
+        <div style="font-size:11px; color:var(--text-muted);">Level</div>
+      </div>
+      <div style="background:var(--bg-surface); border-radius:var(--radius-md); padding:12px; text-align:center; ${!acc.kd ? 'opacity:0.3;' : ''}">
+        <div style="font-size:20px; font-weight:700; color:var(--apex-red);">${acc.kd || 'N/A'}</div>
+        <div style="font-size:11px; color:var(--text-muted);">K/D Ratio</div>
+      </div>
+      <div style="background:var(--bg-surface); border-radius:var(--radius-md); padding:12px; text-align:center; ${!acc.kills ? 'opacity:0.3;' : ''}">
+        <div style="font-size:20px; font-weight:700; color:var(--apex-red);">${acc.kills ? (acc.kills/1000).toFixed(1)+'k' : 'N/A'}</div>
+        <div style="font-size:11px; color:var(--text-muted);">Total Kills</div>
+      </div>
+    </div>
+    <p style="font-size:14px; color:var(--text-secondary); line-height:1.7; margin-bottom:16px; white-space:pre-wrap;">${acc.desc}</p>
+    <div style="margin-bottom:16px;">
+      <div style="font-size:12px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Included Features</div>
+      <div style="display:flex; flex-wrap:wrap; gap:8px;">
+        ${acc.features.map(f => ({og:'OG Skins 🎨',battlepass:'All Battle Passes 🎫',level500:'Level 500+ 💪',fullmail:'Full Email Access 📧'})[f] || f).map(f => `<span style="background:rgba(0,212,255,0.08); border:1px solid rgba(0,212,255,0.2); color:var(--neon-blue); padding:4px 12px; border-radius:4px; font-size:12px; font-weight:600;">${f}</span>`).join('')}
+      </div>
+    </div>
+    <div style="background:var(--bg-surface); border-radius:var(--radius-lg); padding:16px; display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+      <div>
+        <div style="font-size:12px; color:var(--text-muted);">Price</div>
+        <div style="font-family:'Orbitron',monospace; font-size:28px; font-weight:700; color:var(--apex-red);">$${acc.price}</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:12px; color:var(--text-muted);">Delivery</div>
+        <div style="font-weight:700; color:#00ff64;">⚡ ${acc.delivery}</div>
+      </div>
+    </div>
+    <button class="btn btn-primary" style="width:100%; padding:14px;" onclick="buyAccount(${acc.id}); closeModal('accountModal');">
+      <i class="fas fa-lock"></i> Buy Securely – $${acc.price}
+    </button>
+  `;
+  openModal('accountModal');
+}
+
+function buyAccount(id) {
+  const acc = accountListings.find(a => a.id === id);
+  closeModal('accountModal');
+  openCheckout({
+    id: acc.id,
+    title: acc.title,
+    price: acc.price,
+    seller: acc.seller,
+    type: 'accounts',
+    icon: acc.rankIcon
+  });
+}
+
+function applyFilters() {
+  const search = document.getElementById('accountSearch')?.value.toLowerCase() || '';
+  const checkedRanks = [...document.querySelectorAll('.sidebar-filter input[type=checkbox][value]')].filter(c=>c.checked && ['predator','master','diamond','platinum','gold'].includes(c.value)).map(c=>c.value);
+  const checkedFeatures = [...document.querySelectorAll('.sidebar-filter input[type=checkbox]')].filter(c=>c.checked && ['og','battlepass','level500','fullmail'].includes(c.value)).map(c=>c.value);
+  const minP = parseFloat(document.getElementById('minPrice')?.value) || 0;
+  const maxP = parseFloat(document.getElementById('maxPrice')?.value) || Infinity;
+  const sort = document.getElementById('accountSort')?.value || 'featured';
+
+  let result = accountListings.filter(acc => {
+    if (search && !acc.title.toLowerCase().includes(search)) return false;
+    if (checkedRanks.length && !checkedRanks.includes(acc.rank)) return false;
+    if (checkedFeatures.length && !checkedFeatures.every(f => acc.features.includes(f))) return false;
+    if (acc.price < minP || acc.price > maxP) return false;
+    return true;
+  });
+
+  if (sort === 'price-low') result.sort((a,b) => a.price - b.price);
+  else if (sort === 'price-high') result.sort((a,b) => b.price - a.price);
+  else if (sort === 'rating') result.sort((a,b) => b.rating - a.rating);
+
+  renderAccounts(result);
+}
+
+function filterByRank(rank) {
+  filteredAccounts = accountListings.filter(a => a.rank === rank || rank === 'og');
+  renderAccounts(filteredAccounts);
+}
+
+function clearFilters() {
+  document.querySelectorAll('.sidebar-filter input[type=checkbox]').forEach(c => c.checked = false);
+  document.getElementById('minPrice').value = '';
+  document.getElementById('maxPrice').value = '';
+  document.getElementById('accountSearch').value = '';
+  renderAccounts(accountListings);
+}
+
+renderAccounts(accountListings);
+</script>
+</body>
+</html>

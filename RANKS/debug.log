@@ -1,0 +1,45 @@
+[0503/020345.467:WARNING:angle_platform_impl.cc(52)] compileToBinary(230): 
+C:\fakepath(57,8-58): warning X3571: pow(f, e) will not work for negative f, use abs(f) or conditionally handle negative values if you expect them
+C:\fakepath(65,9-43): warning X3571: pow(f, e) will not work for negative f, use abs(f) or conditionally handle negative values if you expect them
+
+[0503/022936.164:INFO:CONSOLE(1)] "Hiding message due to error: Could not find the screen of the target", source: file:///C:/Program%20Files/Adobe/Adobe%20Photoshop%202021%20(Prerelease)/Required/www-butler/build/spaces.js (1)
+[0503/192045.230:WARNING:angle_platform_impl.cc(52)] compileToBinary(230): 
+C:\fakepath(57,8-58): warning X3571: pow(f, e) will not work for negative f, use abs(f) or conditionally handle negative values if you expect them
+C:\fakepath(65,9-43): warning X3571: pow(f, e) will not work for negative f, use abs(f) or conditionally handle negative values if you expect them
+
+[0503/193817.156:WARNING:dns_config_service_win.cc(668)] Failed to read DnsConfig.
+[0503/193850.241:WARNING:dns_config_service_win.cc(668)] Failed to read DnsConfig.
+[0503/193855.244:WARNING:dns_config_service_win.cc(668)] Failed to read DnsConfig.
+[0503/193900.248:WARNING:dns_config_service_win.cc(668)] Failed to read DnsConfig.
+[0503/193905.249:WARNING:dns_config_service_win.cc(668)] Failed to read DnsConfig.
+[0503/193910.252:WARNING:dns_config_service_win.cc(668)] Failed to read DnsConfig.
+[0627/141728.421:WARNING:angle_platform_impl.cc(52)] compileToBinary(230): 
+C:\fakepath(57,8-58): warning X3571: pow(f, e) will not work for negative f, use abs(f) or conditionally handle negative values if you expect them
+C:\fakepath(65,9-43): warning X3571: pow(f, e) will not work for negative f, use abs(f) or conditionally handle negative values if you expect them
+
+[0627/141858.028:INFO:CONSOLE(1)] "Hiding message due to error: CActionControl::Get failed with error: -25920 msg: error: -25920 message: Could not complete your request because a command was not available.", source: file:///C:/Program%20Files/Adobe/Adobe%20Photoshop%202021%20(Prerelease)/Required/www-butler/build/spaces.js (1)
+[0627/142112.065:WARNING:angle_platform_impl.cc(52)] compileToBinary(230): 
+C:\fakepath(57,8-58): warning X3571: pow(f, e) will not work for negative f, use abs(f) or conditionally handle negative values if you expect them
+C:\fakepath(65,9-43): warning X3571: pow(f, e) will not work for negative f, use abs(f) or conditionally handle negative values if you expect them
+
+[0627/154338.667:WARNING:dns_config_service_win.cc(668)] Failed to read DnsConfig.
+[0627/160744.202:WARNING:dns_config_service_win.cc(668)] Failed to read DnsConfig.
+[0627/163828.191:WARNING:angle_platform_impl.cc(52)] compileToBinary(230): 
+C:\fakepath(67,8-58): warning X3571: pow(f, e) will not work for negative f, use abs(f) or conditionally handle negative values if you expect them
+C:\fakepath(75,9-43): warning X3571: pow(f, e) will not work for negative f, use abs(f) or conditionally handle negative values if you expect them
+
+[0627/163832.866:WARNING:dns_config_service_win.cc(668)] Failed to read DnsConfig.
+[0627/181327.020:WARNING:dns_config_service_win.cc(668)] Failed to read DnsConfig.
+[0627/185421.622:WARNING:angle_platform_impl.cc(52)] compileToBinary(230): 
+C:\fakepath(57,8-58): warning X3571: pow(f, e) will not work for negative f, use abs(f) or conditionally handle negative values if you expect them
+C:\fakepath(65,9-43): warning X3571: pow(f, e) will not work for negative f, use abs(f) or conditionally handle negative values if you expect them
+
+[0627/193320.095:INFO:CONSOLE(1)] "Hiding message due to error: Could not find the screen of the target", source: file:///C:/Program%20Files/Adobe/Adobe%20Photoshop%202021%20(Prerelease)/Required/www-butler/build/spaces.js (1)
+[0627/212127.680:ERROR:browser_gpu_channel_host_factory.cc(139)] Failed to launch GPU process.
+[0816/140847.393:WARNING:angle_platform_impl.cc(52)] compileToBinary(230): 
+C:\fakepath(57,8-58): warning X3571: pow(f, e) will not work for negative f, use abs(f) or conditionally handle negative values if you expect them
+C:\fakepath(65,9-43): warning X3571: pow(f, e) will not work for negative f, use abs(f) or conditionally handle negative values if you expect them
+
+[0816/142122.418:INFO:CONSOLE(1)] "Hiding message due to error: CActionControl::Get failed with error: -25920 msg: error: -25920 message: Could not complete your request because a command was not available.", source: file:///C:/Program%20Files/Adobe/Adobe%20Photoshop%202021%20(Prerelease)/Required/www-butler/build/spaces.js (1)
+[0817/020341.306:INFO:CONSOLE(1)] "Hiding message due to error: Could not find the screen of the target", source: file:///C:/Program%20Files/Adobe/Adobe%20Photoshop%202021%20(Prerelease)/Required/www-butler/build/spaces.js (1)
+[0817/023133.223:ERROR:browser_gpu_channel_host_factory.cc(139)] Failed to launch GPU process.

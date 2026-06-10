@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up – NaviApex</title>
+  <meta name="description" content="Create your free NaviApex account and start buying or selling Apex Legends services.">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+<div class="toast-container" id="toastContainer"></div>
+
+<div class="auth-page">
+  <div class="auth-bg-glow"></div>
+
+  <a href="index.html" style="position:absolute; top:24px; left:24px; display:flex; align-items:center; gap:8px; font-size:14px; color:var(--text-secondary); transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-secondary)'">
+    <i class="fas fa-arrow-left"></i> Back to Home
+  </a>
+
+  <div class="auth-card" style="max-width:520px;">
+    <div class="auth-logo">
+      <a href="index.html" style="font-family:'Orbitron',monospace; font-size:26px; font-weight:800; letter-spacing:2px; text-decoration:none; color:#fff;">
+        NAVI<span style="color:var(--apex-red);">APEX</span>
+      </a>
+    </div>
+
+    <h1 class="auth-title">Join NaviApex</h1>
+    <p class="auth-subtitle">Create a free account to buy, sell & dominate</p>
+
+    <!-- Account Type Toggle -->
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:24px;">
+      <div class="account-type-btn active" id="btnBuyer" onclick="setAccountType('buyer')">
+        <i class="fas fa-shopping-cart" style="font-size:20px; color:var(--apex-red);"></i>
+        <div style="font-weight:700; margin-top:6px;">Buyer</div>
+        <div style="font-size:11px; color:var(--text-muted);">Buy services</div>
+      </div>
+      <div class="account-type-btn" id="btnSeller" onclick="setAccountType('seller')">
+        <i class="fas fa-tags" style="font-size:20px; color:var(--apex-gold);"></i>
+        <div style="font-weight:700; margin-top:6px;">Seller</div>
+        <div style="font-size:11px; color:var(--text-muted);">Sell your skills</div>
+      </div>
+    </div>
+
+    <form id="signupForm" onsubmit="handleSignup(event)">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+        <div class="form-group">
+          <label class="form-label" for="signupUsername">Username</label>
+          <input type="text" class="form-input" id="signupUsername" placeholder="ApexLegend99" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="signupEmail">Email</label>
+          <input type="email" class="form-input" id="signupEmail" placeholder="you@email.com" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="signupPassword">Password</label>
+        <div style="position:relative;">
+          <input type="password" class="form-input" id="signupPassword" placeholder="Min. 8 characters" required>
+          <button type="button" onclick="togglePass('signupPassword', this)" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:15px;">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
+        <div id="strengthBar" style="display:none; margin-top:8px;">
+          <div style="display:flex; gap:4px;">
+            <div class="strength-seg" id="seg1" style="height:3px; flex:1; border-radius:2px; background:var(--bg-surface); transition: background 0.3s;"></div>
+            <div class="strength-seg" id="seg2" style="height:3px; flex:1; border-radius:2px; background:var(--bg-surface); transition: background 0.3s;"></div>
+            <div class="strength-seg" id="seg3" style="height:3px; flex:1; border-radius:2px; background:var(--bg-surface); transition: background 0.3s;"></div>
+            <div class="strength-seg" id="seg4" style="height:3px; flex:1; border-radius:2px; background:var(--bg-surface); transition: background 0.3s;"></div>
+          </div>
+          <div id="strengthLabel" style="font-size:11px; color:var(--text-muted); margin-top:4px;"></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="signupConfirm">Confirm Password</label>
+        <div style="position:relative;">
+          <input type="password" class="form-input" id="signupConfirm" placeholder="Repeat password" required>
+          <button type="button" onclick="togglePass('signupConfirm', this)" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:15px;">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Seller only: Apex rank -->
+      <div id="sellerFields" style="display:none;">
+        <div class="form-group">
+          <label class="form-label" for="apexRank">Your Apex Rank</label>
+          <select class="form-input form-select" id="apexRank">
+            <option value="">Select your rank</option>
+            <option value="predator">Apex Predator (Top 750)</option>
+            <option value="master">Master</option>
+            <option value="diamond">Diamond</option>
+            <option value="platinum">Platinum</option>
+          </select>
+          <div class="form-hint">Only Diamond+ can sell boosting services.</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="checkbox-group">
+          <input type="checkbox" id="agreeTerms" required>
+          <label class="checkbox-label" for="agreeTerms">
+            I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>. I confirm I am 18+ years old.
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="checkbox-group">
+          <input type="checkbox" id="agreeRules" required>
+          <label class="checkbox-label" for="agreeRules">
+            I have read and agree to the <a href="#">Seller/Buyer Rules</a> and understand that violations may result in account suspension.
+          </label>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary" id="signupBtn" style="width:100%; padding:14px;">
+        <i class="fas fa-rocket"></i>
+        <span>Create Account</span>
+      </button>
+    </form>
+
+    <div class="auth-divider"><span>or</span></div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+      <button class="btn btn-ghost" onclick="showToast('Social signup coming soon!', 'info')">
+        <i class="fab fa-google" style="color:#ea4335;"></i> Google
+      </button>
+      <button class="btn btn-ghost" onclick="showToast('Social signup coming soon!', 'info')">
+        <i class="fab fa-discord" style="color:#5865f2;"></i> Discord
+      </button>
+    </div>
+
+    <div class="auth-footer">
+      Already have an account? <a href="login.html">Sign in</a>
+    </div>
+  </div>
+</div>
+
+<style>
+.account-type-btn {
+  background: var(--bg-surface);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.account-type-btn:hover {
+  border-color: var(--border-hover);
+}
+.account-type-btn.active {
+  border-color: var(--apex-red);
+  background: rgba(255, 59, 59, 0.08);
+}
+</style>
+
+<script src="app.js"></script>
+<script>
+let accountType = 'buyer';
+
+function setAccountType(type) {
+  accountType = type;
+  document.getElementById('btnBuyer').classList.toggle('active', type === 'buyer');
+  document.getElementById('btnSeller').classList.toggle('active', type === 'seller');
+  document.getElementById('sellerFields').style.display = type === 'seller' ? 'block' : 'none';
+}
+
+function togglePass(id, btn) {
+  const input = document.getElementById(id);
+  if (input.type === 'password') {
+    input.type = 'text';
+    btn.innerHTML = '<i class="fas fa-eye-slash"></i>';
+  } else {
+    input.type = 'password';
+    btn.innerHTML = '<i class="fas fa-eye"></i>';
+  }
+}
+
+// Password strength
+document.addEventListener('DOMContentLoaded', () => {
+  const passInput = document.getElementById('signupPassword');
+  if (passInput) {
+    passInput.addEventListener('input', () => {
+      const val = passInput.value;
+      const bar = document.getElementById('strengthBar');
+      bar.style.display = val ? 'block' : 'none';
+      let strength = 0;
+      if (val.length >= 8) strength++;
+      if (/[A-Z]/.test(val)) strength++;
+      if (/[0-9]/.test(val)) strength++;
+      if (/[^A-Za-z0-9]/.test(val)) strength++;
+      const colors = ['#ff3b3b', '#ff6b35', '#ffd700', '#00ff64'];
+      const labels = ['Weak', 'Fair', 'Good', 'Strong'];
+      for (let i = 1; i <= 4; i++) {
+        const seg = document.getElementById(`seg${i}`);
+        seg.style.background = i <= strength ? colors[strength - 1] : 'var(--bg-surface)';
+      }
+      document.getElementById('strengthLabel').textContent = strength > 0 ? `${labels[strength - 1]} password` : '';
+      document.getElementById('strengthLabel').style.color = strength > 0 ? colors[strength - 1] : '';
+    });
+  }
+});
+
+function handleSignup(e) {
+  e.preventDefault();
+  const btn = document.getElementById('signupBtn');
+  const username = document.getElementById('signupUsername').value.trim();
+  const email = document.getElementById('signupEmail').value.trim();
+  const password = document.getElementById('signupPassword').value;
+  const confirm = document.getElementById('signupConfirm').value;
+
+  ['signupUsername','signupEmail','signupPassword','signupConfirm'].forEach(id => clearFieldError(id));
+
+  let valid = true;
+  if (!username || username.length < 3) {
+    showFieldError('signupUsername', 'Username must be at least 3 characters.');
+    valid = false;
+  }
+  if (!validateEmail(email)) {
+    showFieldError('signupEmail', 'Please enter a valid email address.');
+    valid = false;
+  }
+  if (!validatePassword(password)) {
+    showFieldError('signupPassword', 'Password must be at least 8 characters.');
+    valid = false;
+  }
+  if (password !== confirm) {
+    showFieldError('signupConfirm', 'Passwords do not match.');
+    valid = false;
+  }
+  if (!valid) return;
+
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating account...';
+
+  setTimeout(() => {
+    const result = registerUser({ username, email, password, role: accountType });
+    if (result.success) {
+      setUser(result.user);
+      showToast(`Welcome to NaviApex, ${username}! 🎮`, 'success');
+      setTimeout(() => window.location.href = 'dashboard.html', 1200);
+    } else {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-rocket"></i> Create Account';
+      showToast(result.error, 'error');
+    }
+  }, 1000);
+}
+
+// If already logged in
+const user = getUser();
+if (user) window.location.href = 'dashboard.html';
+</script>
+</body>
+</html>

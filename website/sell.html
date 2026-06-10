@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sell on NaviApex – Start Earning</title>
+  <meta name="description" content="Sell Apex Legends boosting, accounts, and coaching on NaviApex. Join 850+ sellers and start earning today.">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body { padding-top: calc(var(--nav-height) + 42px); }
+    .sell-tabs { display:flex; gap:4px; background:var(--bg-secondary); border:1px solid var(--border-color); border-radius:var(--radius-lg); padding:4px; margin-bottom:32px; }
+    .sell-tab { flex:1; padding:10px; text-align:center; border-radius:var(--radius-md); font-family:'Rajdhani',sans-serif; font-size:15px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; cursor:pointer; color:var(--text-secondary); transition:all 0.2s; }
+    .sell-tab.active { background:var(--gradient-button); color:#fff; }
+    .sell-panel { display:none; }
+    .sell-panel.active { display:block; animation:fade-up 0.3s ease; }
+    .rules-card { background:rgba(255,59,59,0.05); border:1px solid rgba(255,59,59,0.2); border-radius:var(--radius-xl); padding:24px; margin-bottom:24px; }
+    .rules-card h4 { color:var(--apex-red); font-family:'Rajdhani',sans-serif; font-size:16px; font-weight:700; margin-bottom:12px; }
+    .rule-item { display:flex; align-items:flex-start; gap:10px; padding:8px 0; font-size:14px; color:var(--text-secondary); border-bottom:1px solid rgba(255,59,59,0.1); }
+    .rule-item:last-child { border:none; }
+    .rule-item .rule-num { background:var(--apex-red); color:#fff; width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:800; flex-shrink:0; margin-top:1px; }
+    .perk-card { background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-xl); padding:24px; text-align:center; }
+    .perk-icon { font-size:40px; margin-bottom:12px; }
+    .perk-title { font-family:'Rajdhani',sans-serif; font-size:18px; font-weight:700; margin-bottom:8px; }
+    .perk-desc { font-size:13px; color:var(--text-secondary); line-height:1.6; }
+    .img-upload-zone { border:2px dashed var(--border-color); border-radius:var(--radius-xl); padding:40px; text-align:center; cursor:pointer; transition:all 0.2s; }
+    .img-upload-zone:hover { border-color:var(--apex-red); background:rgba(255,59,59,0.03); }
+    .my-listings-row { display:flex; align-items:center; justify-content:space-between; background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-lg); padding:16px; margin-bottom:10px; gap:16px; }
+  </style>
+</head>
+<body>
+
+<nav class="navbar" id="mainNav">
+  <div class="navbar-inner">
+    <a href="index.html" class="navbar-logo">
+      <img src="logo.png" alt="NaviApex">
+      <div class="navbar-logo-text">NAVI<span>APEX</span></div>
+    </a>
+    <div class="navbar-nav">
+      <a href="boosting.html" class="nav-link"><i class="fas fa-bolt"></i> Boosting</a>
+      <a href="accounts.html" class="nav-link"><i class="fas fa-shield-alt"></i> Accounts</a>
+      <a href="coaching.html" class="nav-link"><i class="fas fa-chalkboard-teacher"></i> Coaching</a>
+      <a href="sell.html" class="nav-link active"><i class="fas fa-tags"></i> Sell</a>
+    </div>
+    <div class="navbar-actions" id="navActions"></div>
+    <div class="hamburger" id="hamburger" onclick="toggleMobileNav()"><span></span><span></span><span></span></div>
+  </div>
+</nav>
+<div class="mobile-nav-overlay" id="mobileNav">
+  <a href="index.html" class="mobile-nav-link"><i class="fas fa-home"></i> Home</a>
+  <a href="sell.html" class="mobile-nav-link"><i class="fas fa-tags"></i> Sell</a>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- HERO -->
+<section style="background:linear-gradient(135deg,#0a1500 0%,#0a0a0f 60%); border-bottom:1px solid var(--border-color); padding:60px 0 40px;">
+  <div class="container">
+    <div class="section-label">Sell on NaviApex</div>
+    <h1 class="section-title" style="font-size:clamp(28px,4vw,48px); margin-bottom:12px;">
+      Turn Your Skills Into <span class="text-gradient">Earnings</span>
+    </h1>
+    <p style="color:var(--text-secondary); font-size:16px; max-width:600px; margin-bottom:24px;">
+      Join 850+ verified sellers on NaviApex. Sell boosting, accounts, and coaching. Low fees, fast payouts, and a huge buyer base.
+    </p>
+    <div style="display:flex; gap:32px; flex-wrap:wrap;">
+      <div style="text-align:center;">
+        <div style="font-family:'Orbitron',monospace; font-size:28px; font-weight:700; background:var(--gradient-red); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">850+</div>
+        <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">Active Sellers</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-family:'Orbitron',monospace; font-size:28px; font-weight:700; background:var(--gradient-gold); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">8%</div>
+        <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">Platform Fee</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-family:'Orbitron',monospace; font-size:28px; font-weight:700; background:var(--gradient-red); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">24h</div>
+        <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">Payout Speed</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-family:'Orbitron',monospace; font-size:28px; font-weight:700; background:var(--gradient-red); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">$0</div>
+        <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">To Start</div>
+      </div>
+    </div>
+
+    <!-- Verified Seller CTA -->
+    <div id="verifiedSellerBanner" style="display:none; margin-top:28px; padding:20px 24px; background:linear-gradient(135deg,rgba(0,255,100,0.08),rgba(255,215,0,0.06)); border:1px solid rgba(0,255,100,0.25); border-radius:var(--radius-xl);">
+      <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div style="font-size:28px;">✅</div>
+          <div>
+            <div style="font-size:15px; font-weight:700; color:#00ff64;">You're a Verified Seller!</div>
+            <div style="font-size:13px; color:var(--text-secondary);">Create new listings and start selling on the marketplace.</div>
+          </div>
+        </div>
+        <a href="create-listing.html" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Create New Listing</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MAIN -->
+<section class="section-sm">
+  <div class="container">
+    <div style="display:grid; grid-template-columns:1fr 340px; gap:32px; align-items:start;">
+
+      <!-- Left: Tabs + Form -->
+      <div>
+        <div class="sell-tabs">
+          <div class="sell-tab active" onclick="switchTab('boosting')">⚡ Boosting</div>
+          <div class="sell-tab" onclick="switchTab('account')">🎮 Account</div>
+          <div class="sell-tab" onclick="switchTab('coaching')">🎯 Coaching</div>
+        </div>
+
+        <!-- BOOSTING PANEL -->
+        <div class="sell-panel active" id="panel-boosting">
+          <h2 style="font-family:'Rajdhani',sans-serif; font-size:22px; font-weight:700; margin-bottom:8px;">Apply as a Booster</h2>
+          <p style="font-size:14px; color:var(--text-secondary); margin-bottom:24px;">Only Diamond+ players can become boosters. You'll need to verify your rank before approval.</p>
+
+          <form id="boostingForm" onsubmit="submitApplication(event,'boosting')">
+            <div class="form-group">
+              <label class="form-label">Highest / Peak Rank</label>
+              <select class="form-input form-select" id="b_rank" required>
+                <option value="">Select rank...</option>
+                <option>Diamond</option><option>Master</option><option>Predator</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Experience (if any)</label>
+              <textarea class="form-input" id="b_exp" rows="3" placeholder="Tell us about your previous boosting experience..."></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Apex Steam ID or EA ID (for verification)</label>
+              <input type="text" class="form-input" id="b_id" placeholder="Your Steam/EA ID" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Discord ID</label>
+              <input type="text" class="form-input" id="b_discord" placeholder="YourName#0000" required>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%; padding:14px;">
+              <i class="fas fa-paper-plane"></i> Submit Application
+            </button>
+          </form>
+        </div>
+
+        <!-- ACCOUNT PANEL -->
+        <div class="sell-panel" id="panel-account">
+          <h2 style="font-family:'Rajdhani',sans-serif; font-size:22px; font-weight:700; margin-bottom:8px;">Apply as an Account Seller</h2>
+          <p style="font-size:14px; color:var(--text-secondary); margin-bottom:24px;">Account sellers must guarantee the safety and ownership of all accounts listed.</p>
+
+          <form id="accountForm" onsubmit="submitApplication(event,'account')">
+            <div class="form-group">
+              <label class="form-label">Do you have OG mail of the accounts?</label>
+              <select class="form-input form-select" id="a_og" required>
+                <option value="">Select...</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Are you ready to give the OG mail?</label>
+              <select class="form-input form-select" id="a_give_og" required>
+                <option value="">Select...</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Discord ID</label>
+              <input type="text" class="form-input" id="a_discord" placeholder="YourName#0000" required>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%; padding:14px;">
+              <i class="fas fa-paper-plane"></i> Submit Application
+            </button>
+          </form>
+        </div>
+
+        <!-- COACHING PANEL -->
+        <div class="sell-panel" id="panel-coaching">
+          <h2 style="font-family:'Rajdhani',sans-serif; font-size:22px; font-weight:700; margin-bottom:8px;">Apply as a Coach</h2>
+          <p style="font-size:14px; color:var(--text-secondary); margin-bottom:24px;">Share your expertise with other players. Coaches must be Diamond+.</p>
+
+          <form id="coachingForm" onsubmit="submitApplication(event,'coaching')">
+            <div class="form-group">
+              <label class="form-label">Highest / Peak Rank</label>
+              <select class="form-input form-select" id="c_rank" required>
+                <option value="">Select rank...</option>
+                <option>Diamond</option><option>Master</option><option>Predator</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Experience (if any)</label>
+              <textarea class="form-input" id="c_exp" rows="3" placeholder="Tell us about your previous coaching experience..."></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Apex Steam ID or EA ID (for verification)</label>
+              <input type="text" class="form-input" id="c_id" placeholder="Your Steam/EA ID" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Discord ID</label>
+              <input type="text" class="form-input" id="c_discord" placeholder="YourName#0000" required>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%; padding:14px;">
+              <i class="fas fa-paper-plane"></i> Submit Application
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Right: Perks + My Listings -->
+      <div>
+        <div style="background:var(--bg-card); border:1px solid rgba(255,215,0,0.2); border-radius:var(--radius-xl); padding:24px; margin-bottom:20px;">
+          <h3 style="font-family:'Rajdhani',sans-serif; font-size:18px; font-weight:700; margin-bottom:16px; color:var(--apex-gold);">💰 Seller Perks</h3>
+          <div style="display:flex; flex-direction:column; gap:14px;">
+            <div style="display:flex; align-items:center; gap:12px; font-size:14px;"><span style="font-size:20px;">💸</span><div><div style="font-weight:600;">Only 8% Fee</div><div style="color:var(--text-muted); font-size:12px;">Industry's lowest platform cut</div></div></div>
+            <div style="display:flex; align-items:center; gap:12px; font-size:14px;"><span style="font-size:20px;">⚡</span><div><div style="font-weight:600;">24hr Payouts</div><div style="color:var(--text-muted); font-size:12px;">Fast withdrawal via PayPal, crypto</div></div></div>
+            <div style="display:flex; align-items:center; gap:12px; font-size:14px;"><span style="font-size:20px;">🔒</span><div><div style="font-weight:600;">Buyer Protection</div><div style="color:var(--text-muted); font-size:12px;">Escrow protects both buyer and seller</div></div></div>
+            <div style="display:flex; align-items:center; gap:12px; font-size:14px;"><span style="font-size:20px;">📈</span><div><div style="font-weight:600;">Analytics Dashboard</div><div style="color:var(--text-muted); font-size:12px;">Track your sales and earnings in real-time</div></div></div>
+            <div style="display:flex; align-items:center; gap:12px; font-size:14px;"><span style="font-size:20px;">🏆</span><div><div style="font-weight:600;">Featured Placement</div><div style="color:var(--text-muted); font-size:12px;">Top-rated sellers get homepage visibility</div></div></div>
+          </div>
+        </div>
+
+        <!-- My Listings -->
+        <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-xl); padding:24px;">
+          <h3 style="font-family:'Rajdhani',sans-serif; font-size:18px; font-weight:700; margin-bottom:16px;">My Listings</h3>
+          <div id="myListingsContainer">
+            <div style="text-align:center; padding:30px; color:var(--text-muted);">
+              <div style="font-size:36px; margin-bottom:8px;">📦</div>
+              <div style="font-size:14px;">No listings yet. Submit your first listing above!</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer"><div class="container"><div class="footer-bottom"><div class="footer-copyright">© 2026 NaviApex · <a href="index.html" style="color:var(--apex-red);">Home</a></div><div class="footer-legal"><a href="#">Terms</a><a href="#">Seller Rules</a></div></div></div></footer>
+
+<script src="app.js"></script>
+<script>
+function switchTab(type) {
+  document.querySelectorAll('.sell-tab').forEach((t,i) => {
+    const types = ['boosting','account','coaching'];
+    t.classList.toggle('active', types[i] === type);
+  });
+  document.querySelectorAll('.sell-panel').forEach(p => {
+    p.classList.toggle('active', p.id === `panel-${type}`);
+  });
+}
+
+function submitApplication(e, type) {
+  e.preventDefault();
+  const user = getUser();
+  if (!user) { showToast('Please sign in to apply!', 'info'); setTimeout(()=>window.location.href='login.html',1200); return; }
+
+  let title = '';
+  if (type === 'boosting') title = 'Booster Application';
+  else if (type === 'account') title = 'Account Seller Application';
+  else title = 'Coach Application';
+
+  addListing({ type: 'application', title: title, price: 'N/A', status: 'pending' });
+  showToast('Application submitted! We will contact you on Discord.', 'success');
+  renderMyListings();
+  e.target.reset();
+}
+
+function renderMyListings() {
+  const user = getUser();
+  if (!user) return;
+  const all = getListings().filter(l => l.seller === user.username);
+  const container = document.getElementById('myListingsContainer');
+  if (all.length === 0) {
+    container.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-muted);"><div style="font-size:36px; margin-bottom:8px;">📦</div><div style="font-size:14px;">No listings yet.</div></div>';
+    return;
+  }
+  container.innerHTML = all.map(l => `
+    <div class="my-listings-row">
+      <div style="flex:1; min-width:0;">
+        <div style="font-size:13px; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${l.title}</div>
+        <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">$${l.price} · ${l.type}</div>
+      </div>
+      <span class="status-badge ${l.status === 'active' ? 'status-active' : 'status-pending'}">
+        ${l.status === 'active' ? '✓ Active' : '⏳ Pending'}
+      </span>
+    </div>
+  `).join('');
+}
+
+renderMyListings();
+
+// Check auth
+const user = getUser();
+if (!user) {
+  document.querySelectorAll('form').forEach(f => {
+    f.addEventListener('submit', (e) => {
+      e.preventDefault();
+      showToast('Please sign in to list services!', 'info');
+      setTimeout(() => window.location.href = 'login.html', 1200);
+    });
+  });
+} else if (user.role === 'owner' || user.role === 'seller' || user.verified === true) {
+  // Show verified seller banner
+  const banner = document.getElementById('verifiedSellerBanner');
+  if (banner) banner.style.display = 'block';
+}
+</script>
+</body>
+</html>

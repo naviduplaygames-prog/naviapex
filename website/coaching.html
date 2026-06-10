@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pro Coaching – NaviApex | Apex Legends Coaching</title>
+  <meta name="description" content="1-on-1 Apex Legends coaching with Predator and Masters players. Improve your rank, aim, movement, and game sense.">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body { padding-top: calc(var(--nav-height) + 42px); }
+    .page-hero { background:linear-gradient(135deg,#001215 0%,#0a0a0f 60%); border-bottom:1px solid var(--border-color); padding:60px 0 40px; position:relative; overflow:hidden; }
+    .package-card { background:var(--bg-card); border:2px solid var(--border-color); border-radius:var(--radius-xl); padding:32px; text-align:center; transition:all 0.3s ease; position:relative; overflow:hidden; }
+    .package-card:hover { transform:translateY(-6px); box-shadow:var(--shadow-card); }
+    .package-card.popular { border-color:var(--apex-red); }
+    .package-card.popular::before { content:'MOST POPULAR'; position:absolute; top:0; left:50%; transform:translateX(-50%); background:var(--gradient-button); color:#fff; font-size:10px; font-weight:700; padding:4px 16px; border-radius:0 0 8px 8px; letter-spacing:1px; }
+    .package-price { font-family:'Orbitron',monospace; font-size:40px; font-weight:800; color:var(--apex-red); margin:16px 0 8px; }
+    .package-title { font-family:'Rajdhani',sans-serif; font-size:22px; font-weight:700; }
+    .package-features { text-align:left; margin:20px 0; }
+    .package-feature { display:flex; align-items:center; gap:10px; padding:8px 0; font-size:14px; color:var(--text-secondary); border-bottom:1px solid var(--border-color); }
+    .package-feature:last-child { border-bottom:none; }
+    .package-feature .check { color:#00ff64; flex-shrink:0; }
+    .booking-modal-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .time-slot { background:var(--bg-surface); border:2px solid var(--border-color); border-radius:var(--radius-md); padding:10px; text-align:center; font-size:13px; font-weight:600; cursor:pointer; transition:all 0.2s; }
+    .time-slot:hover, .time-slot.selected { border-color:var(--apex-red); background:rgba(255,59,59,0.08); color:var(--apex-red); }
+    .time-slot.taken { opacity:0.4; cursor:not-allowed; color:var(--text-muted); }
+  </style>
+</head>
+<body>
+
+<nav class="navbar" id="mainNav">
+  <div class="navbar-inner">
+    <a href="index.html" class="navbar-logo">
+      <img src="logo.png" alt="NaviApex">
+      <div class="navbar-logo-text">NAVI<span>APEX</span></div>
+    </a>
+    <div class="navbar-nav">
+      <a href="boosting.html" class="nav-link"><i class="fas fa-bolt"></i> Boosting</a>
+      <a href="accounts.html" class="nav-link"><i class="fas fa-shield-alt"></i> Accounts</a>
+      <a href="coaching.html" class="nav-link active"><i class="fas fa-chalkboard-teacher"></i> Coaching</a>
+      <a href="sell.html" class="nav-link"><i class="fas fa-tags"></i> Sell</a>
+    </div>
+    <div class="navbar-actions" id="navActions"></div>
+    <div class="hamburger" id="hamburger" onclick="toggleMobileNav()"><span></span><span></span><span></span></div>
+  </div>
+</nav>
+<div class="category-bar">
+  <div class="category-bar-inner">
+    <a class="cat-link active" href="coaching.html">🎯 All Coaches</a>
+    <a class="cat-link" href="#packages">📦 Packages</a>
+    <a class="cat-link" href="#coaches">👥 Coaches</a>
+    <a class="cat-link" href="#howworks">❓ How It Works</a>
+  </div>
+</div>
+<div class="mobile-nav-overlay" id="mobileNav">
+  <a href="index.html" class="mobile-nav-link"><i class="fas fa-home"></i> Home</a>
+  <a href="coaching.html" class="mobile-nav-link"><i class="fas fa-chalkboard-teacher"></i> Coaching</a>
+</div>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="container">
+    <div class="section-label">Pro Coaching</div>
+    <h1 class="section-title" style="font-size:clamp(28px,4vw,48px); margin-bottom:12px;">
+      Level Up With <span class="text-gradient">Pro Coaching</span>
+    </h1>
+    <p style="color:var(--text-secondary); font-size:16px; max-width:600px; margin-bottom:24px;">
+      1-on-1 coaching sessions with verified Predator and Masters players. Improve your aim, movement, decision-making, and reach the rank you deserve.
+    </p>
+    <div style="display:flex; gap:20px; flex-wrap:wrap;">
+      <div style="display:flex; align-items:center; gap:8px; background:rgba(255,59,59,0.08); border:1px solid rgba(255,59,59,0.2); border-radius:20px; padding:8px 16px; font-size:13px; color:var(--apex-red);">
+        🎯 Custom Game Analysis
+      </div>
+      <div style="display:flex; align-items:center; gap:8px; background:rgba(0,212,255,0.08); border:1px solid rgba(0,212,255,0.2); border-radius:20px; padding:8px 16px; font-size:13px; color:var(--neon-blue);">
+        📺 Live VOD Review
+      </div>
+      <div style="display:flex; align-items:center; gap:8px; background:rgba(0,255,100,0.08); border:1px solid rgba(0,255,100,0.2); border-radius:20px; padding:8px 16px; font-size:13px; color:#00ff64;">
+        📋 Custom Improvement Plan
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PACKAGES -->
+<section class="section" id="packages">
+  <div class="container">
+    <div class="section-header text-center">
+      <div class="section-label">Packages</div>
+      <h2 class="section-title">Choose Your <span class="text-gradient">Coaching Plan</span></h2>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:24px; max-width:900px; margin:0 auto;">
+      <div class="package-card">
+        <div style="font-size:36px; margin-bottom:12px;">🎓</div>
+        <div class="package-title">Starter</div>
+        <div style="font-size:13px; color:var(--text-muted); margin-top:6px;">Perfect for beginners</div>
+        <div class="package-price">$14<span style="font-size:20px;">.99</span></div>
+        <div style="font-size:12px; color:var(--text-muted); margin-bottom:20px;">1-Hour Session</div>
+        <div class="package-features">
+          <div class="package-feature"><span class="check">✓</span> 60-minute 1-on-1 session</div>
+          <div class="package-feature"><span class="check">✓</span> Aim & positioning tips</div>
+          <div class="package-feature"><span class="check">✓</span> VOD review (1 match)</div>
+          <div class="package-feature"><span class="check">✓</span> Basic game plan</div>
+          <div class="package-feature" style="opacity:0.3;"><span>✗</span> Custom drills</div>
+          <div class="package-feature" style="opacity:0.3;"><span>✗</span> Follow-up session</div>
+        </div>
+        <button class="btn btn-secondary" style="width:100%;" onclick="bookSession('Starter', 14.99)">Book Session</button>
+      </div>
+
+      <div class="package-card popular">
+        <div style="font-size:36px; margin-bottom:12px; margin-top:16px;">⚡</div>
+        <div class="package-title">Pro</div>
+        <div style="font-size:13px; color:var(--text-muted); margin-top:6px;">Most popular choice</div>
+        <div class="package-price">$34<span style="font-size:20px;">.99</span></div>
+        <div style="font-size:12px; color:var(--text-muted); margin-bottom:20px;">3-Hour Session Bundle</div>
+        <div class="package-features">
+          <div class="package-feature"><span class="check">✓</span> 3×60-minute sessions</div>
+          <div class="package-feature"><span class="check">✓</span> Full gameplay analysis</div>
+          <div class="package-feature"><span class="check">✓</span> VOD review (3 matches)</div>
+          <div class="package-feature"><span class="check">✓</span> Custom improvement plan</div>
+          <div class="package-feature"><span class="check">✓</span> Custom aim drills</div>
+          <div class="package-feature" style="opacity:0.3;"><span>✗</span> Priority support</div>
+        </div>
+        <button class="btn btn-primary" style="width:100%;" onclick="bookSession('Pro', 34.99)">Book Session</button>
+      </div>
+
+      <div class="package-card">
+        <div style="font-size:36px; margin-bottom:12px;">👑</div>
+        <div class="package-title">Elite</div>
+        <div style="font-size:13px; color:var(--text-muted); margin-top:6px;">Full transformation</div>
+        <div class="package-price">$79<span style="font-size:20px;">.99</span></div>
+        <div style="font-size:12px; color:var(--text-muted); margin-bottom:20px;">8-Hour + Follow-ups</div>
+        <div class="package-features">
+          <div class="package-feature"><span class="check">✓</span> 8×60-minute sessions</div>
+          <div class="package-feature"><span class="check">✓</span> Full rank improvement plan</div>
+          <div class="package-feature"><span class="check">✓</span> Unlimited VOD reviews</div>
+          <div class="package-feature"><span class="check">✓</span> Daily improvement tasks</div>
+          <div class="package-feature"><span class="check">✓</span> Custom aim routine</div>
+          <div class="package-feature"><span class="check">✓</span> 1-month Discord support</div>
+        </div>
+        <button class="btn btn-gold" style="width:100%;" onclick="bookSession('Elite', 79.99)">Book Session</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COACHES -->
+<section class="section" id="coaches" style="background:var(--bg-secondary);">
+  <div class="container">
+    <div class="section-header" style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:16px;">
+      <div>
+        <div class="section-label">Our Coaches</div>
+        <h2 class="section-title">Find Your <span class="text-gradient">Perfect Coach</span></h2>
+      </div>
+      <select class="sort-select" id="coachSort" onchange="renderCoaches()">
+        <option value="rating">Top Rated</option>
+        <option value="price-low">Price: Low → High</option>
+        <option value="price-high">Price: High → Low</option>
+        <option value="orders">Most Orders</option>
+      </select>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(310px,1fr)); gap:24px;" id="coachesGrid"></div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="howworks">
+  <div class="container">
+    <div class="section-header text-center">
+      <div class="section-label">Process</div>
+      <h2 class="section-title">How Coaching <span class="text-gradient">Works</span></h2>
+    </div>
+    <div class="steps-grid">
+      <div class="step-item"><div class="step-number">1</div><h3 class="step-title">Choose a Coach</h3><p class="step-desc">Browse coaches by rank, specialty, and price. Read reviews from other players.</p></div>
+      <div class="step-item"><div class="step-number">2</div><h3 class="step-title">Book a Session</h3><p class="step-desc">Select your time slot, package, and pay securely through our escrow system.</p></div>
+      <div class="step-item"><div class="step-number">3</div><h3 class="step-title">Join the Session</h3><p class="step-desc">Connect via Discord. Your coach analyzes your gameplay and provides feedback.</p></div>
+      <div class="step-item"><div class="step-number">4</div><h3 class="step-title">Improve & Rank Up</h3><p class="step-desc">Apply your coach's advice, track improvement, and watch your rank climb!</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- Booking Modal -->
+<div class="modal-overlay" id="bookingModal">
+  <div class="modal" style="max-width:560px;">
+    <div class="modal-header">
+      <div class="modal-title" id="bookingTitle">Book Coaching Session</div>
+      <button class="modal-close" onclick="closeModal('bookingModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div style="background:var(--bg-surface); border-radius:var(--radius-lg); padding:16px; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center;" id="bookingSummaryBar">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Select a Coach</label>
+        <select class="form-input form-select" id="bookingCoach">
+          <option value="">Choose coach...</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Preferred Date</label>
+        <input type="date" class="form-input" id="bookingDate" min="">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Available Time Slots</label>
+        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px;" id="timeSlots"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Your Focus Area</label>
+        <select class="form-input form-select" id="bookingFocus">
+          <option value="">Select focus...</option>
+          <option>Aim & Shooting</option>
+          <option>Movement & Positioning</option>
+          <option>Decision Making</option>
+          <option>Team Play & Communication</option>
+          <option>Ranked Strategy</option>
+          <option>Character Mastery</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Discord Username</label>
+        <input type="text" class="form-input" id="bookingDiscord" placeholder="YourName#0000">
+      </div>
+      <button class="btn btn-primary" style="width:100%; padding:14px;" onclick="confirmBooking()">
+        <i class="fas fa-calendar-check"></i> Confirm Booking
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+<footer class="footer"><div class="container"><div class="footer-bottom"><div class="footer-copyright">© 2026 NaviApex · <a href="index.html" style="color:var(--apex-red);">Home</a></div><div class="footer-legal"><a href="#">Terms</a><a href="#">Privacy</a></div></div></div></footer>
+
+<script src="app.js"></script>
+<script src="paypal.js"></script>
+<script>
+const coaches = [
+  { id:1, name:'NaviApex (Owner)', rank:'Predator', kd:9.2, sessions:487, rating:5.0, price:24.99, online:true, specialties:['Aim','Movement','Game Sense'], desc:'Top 50 Predator NA. Coached 400+ players to Diamond+. Known for Wraith mastery.' }
+];
+
+function renderCoaches() {
+  const sort = document.getElementById('coachSort')?.value || 'rating';
+  let sorted = [...coaches];
+  if (sort === 'price-low') sorted.sort((a,b) => a.price - b.price);
+  else if (sort === 'price-high') sorted.sort((a,b) => b.price - a.price);
+  else if (sort === 'orders') sorted.sort((a,b) => b.sessions - a.sessions);
+  else sorted.sort((a,b) => b.rating - a.rating);
+
+  document.getElementById('coachesGrid').innerHTML = sorted.map(c => `
+    <div class="coach-card">
+      <div class="coach-header">
+        <div class="coach-avatar">${c.name.slice(0,2).toUpperCase()}</div>
+        <div class="coach-info">
+          <div class="coach-name"><a href="seller-profile.html" style="text-decoration:none; color:inherit;">${c.name}</a></div>
+          <div class="coach-rank-badge ${c.rank.toLowerCase()}">${c.rank === 'Predator' ? '🔴' : '👑'} ${c.rank}</div>
+          <div class="coach-stats-row">
+            <span class="coach-stat">⭐ ${c.rating}</span>
+            <span class="coach-stat">📚 ${c.sessions} sessions</span>
+            <span class="coach-stat">🎯 ${c.kd} K/D</span>
+          </div>
+        </div>
+        ${c.online ? '<div class="coach-online-dot">Online</div>' : ''}
+      </div>
+      <div class="coach-body">
+        <p style="font-size:13px; color:var(--text-secondary); line-height:1.6; margin-bottom:12px;">${c.desc}</p>
+        <div class="coach-specialties">
+          ${c.specialties.map(s => `<span class="specialty-tag">${s}</span>`).join('')}
+        </div>
+        <div class="coach-footer">
+          <div>
+            <div class="coach-price">$${c.price.toFixed(2)}<span class="coach-price-unit">/hr</span></div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="bookSession('Custom', ${c.price}, ${c.id})">
+            Book Now
+          </button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+let selectedPackage = null;
+let selectedTime = null;
+
+function bookSession(pkg, price, coachId = null) {
+  const user = getUser();
+  if (!user) { showToast('Please sign in to book a session!', 'info'); setTimeout(()=>window.location.href='login.html',1200); return; }
+  selectedPackage = { pkg, price };
+  document.getElementById('bookingTitle').textContent = `Book ${pkg} Coaching Session`;
+  document.getElementById('bookingSummaryBar').innerHTML = `
+    <div><div style="font-size:12px; color:var(--text-muted);">Package</div><div style="font-weight:700;">${pkg} Session</div></div>
+    <div style="font-family:'Orbitron',monospace; font-size:24px; font-weight:700; color:var(--apex-red);">$${price.toFixed(2)}</div>
+  `;
+  // Populate coaches
+  const sel = document.getElementById('bookingCoach');
+  sel.innerHTML = '<option value="">Choose coach...</option>' + coaches.map(c => `<option value="${c.id}" ${coachId === c.id ? 'selected' : ''}>${c.name} (${c.rank}) — ⭐${c.rating}</option>`).join('');
+
+  // Set min date to tomorrow
+  const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
+  document.getElementById('bookingDate').min = tomorrow.toISOString().split('T')[0];
+  document.getElementById('bookingDate').value = tomorrow.toISOString().split('T')[0];
+  renderTimeSlots();
+
+  openModal('bookingModal');
+}
+
+function renderTimeSlots() {
+  const times = ['09:00','11:00','13:00','15:00','17:00','19:00','21:00','23:00'];
+  const takenIdx = [2, 5];
+  selectedTime = null;
+  document.getElementById('timeSlots').innerHTML = times.map((t, i) => `
+    <div class="time-slot ${takenIdx.includes(i) ? 'taken' : ''}" onclick="${takenIdx.includes(i) ? '' : `selectTime(this,'${t}')`}">
+      ${t}${takenIdx.includes(i) ? '<br><small>Taken</small>' : ''}
+    </div>
+  `).join('');
+}
+
+function selectTime(el, time) {
+  document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedTime = time;
+}
+
+function confirmBooking() {
+  if (!selectedTime) { showToast('Please select a time slot!', 'error'); return; }
+  if (!document.getElementById('bookingCoach').value) { showToast('Please select a coach!', 'error'); return; }
+  if (!document.getElementById('bookingDiscord').value.trim()) { showToast('Please enter your Discord username!', 'error'); return; }
+  const coachId = parseInt(document.getElementById('bookingCoach').value);
+  const coach = coaches.find(c => c.id === coachId);
+  closeModal('bookingModal');
+  openCheckout({
+    id: Date.now(),
+    title: `${selectedPackage.pkg} Coaching with ${coach.name}`,
+    price: selectedPackage.price,
+    seller: coach.name,
+    type: 'coaching',
+    icon: '🎯'
+  });
+}
+
+renderCoaches();
+</script>
+</body>
+</html>

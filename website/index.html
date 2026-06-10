@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NaviApex – #1 Apex Legends Boosting, Accounts & Coaching Marketplace</title>
+  <meta name="description" content="Buy Apex Legends boosting, ranked accounts, and pro coaching from verified sellers. The safest Apex Legends marketplace with 24/7 support.">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    /* Page-specific overrides */
+    body { padding-top: calc(var(--nav-height) + 42px); }
+    .hero { padding-top: 0; min-height: calc(100vh - var(--nav-height) - 42px); }
+  </style>
+</head>
+<body>
+
+<!-- ==================== NAVBAR ==================== -->
+<nav class="navbar" id="mainNav">
+  <div class="navbar-inner">
+    <a href="index.html" class="navbar-logo">
+      <img src="logo.png" alt="NaviApex Logo">
+      <div class="navbar-logo-text">NAVI<span>APEX</span></div>
+    </a>
+
+    <div class="navbar-nav">
+      <a href="boosting.html" class="nav-link">
+        <i class="fas fa-bolt"></i> Boosting
+      </a>
+      <a href="accounts.html" class="nav-link">
+        <i class="fas fa-shield-alt"></i> Accounts
+      </a>
+      <a href="coaching.html" class="nav-link">
+        <i class="fas fa-chalkboard-teacher"></i> Coaching
+      </a>
+      <a href="sell.html" class="nav-link">
+        <i class="fas fa-tags"></i> Sell
+        <span class="nav-badge">NEW</span>
+      </a>
+    </div>
+
+    <div class="navbar-actions" id="navActions">
+      <!-- Will be replaced by JS based on auth state -->
+      <a href="login.html" class="btn btn-ghost btn-sm">Sign In</a>
+      <a href="signup.html" class="btn btn-primary btn-sm">
+        <i class="fas fa-rocket"></i> Get Started
+      </a>
+    </div>
+
+    <div class="hamburger" id="hamburger" onclick="toggleMobileNav()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+</nav>
+
+<!-- Category Bar -->
+<div class="category-bar">
+  <div class="category-bar-inner">
+    <a class="cat-link active" href="#boosting" onclick="scrollToSection('boosting')">
+      <span class="cat-icon">🚀</span> Rank Boosting
+    </a>
+    <a class="cat-link" href="accounts.html">
+      <span class="cat-icon">🎮</span> Accounts
+    </a>
+    <a class="cat-link" href="coaching.html">
+      <span class="cat-icon">🎯</span> Coaching
+    </a>
+    <a class="cat-link" href="#" onclick="scrollToSection('featured')">
+      <span class="cat-icon">⭐</span> Featured
+    </a>
+    <a class="cat-link" href="#" onclick="scrollToSection('testimonials')">
+      <span class="cat-icon">💬</span> Reviews
+    </a>
+    <a class="cat-link" href="sell.html">
+      <span class="cat-icon">💰</span> Start Selling
+    </a>
+  </div>
+</div>
+
+<!-- Mobile Nav Overlay -->
+<div class="mobile-nav-overlay" id="mobileNav">
+  <a href="boosting.html" class="mobile-nav-link"><i class="fas fa-bolt"></i> Boosting</a>
+  <a href="accounts.html" class="mobile-nav-link"><i class="fas fa-shield-alt"></i> Accounts</a>
+  <a href="coaching.html" class="mobile-nav-link"><i class="fas fa-chalkboard-teacher"></i> Coaching</a>
+  <a href="sell.html" class="mobile-nav-link"><i class="fas fa-tags"></i> Sell</a>
+  <a href="login.html" class="mobile-nav-link"><i class="fas fa-sign-in-alt"></i> Sign In</a>
+  <a href="signup.html" class="mobile-nav-link"><i class="fas fa-rocket"></i> Sign Up</a>
+</div>
+
+<!-- ==================== HERO ==================== -->
+<section class="hero" id="hero">
+  <div class="hero-bg">
+    <img src="hero_banner.png" alt="Apex Legends Background">
+    <div class="hero-bg-overlay"></div>
+    <div class="hero-bg-grid"></div>
+  </div>
+
+  <!-- Particles -->
+  <div class="hero-particles" id="heroParticles"></div>
+
+  <div class="hero-content">
+    <div class="hero-text animate-in">
+      <div class="hero-badge">
+        <span class="dot"></span>
+        #1 Apex Legends Marketplace
+      </div>
+
+      <h1 class="hero-title">
+        DOMINATE THE
+        <span class="line-red">APEX ARENA</span>
+        WITH NAVIPEX
+      </h1>
+
+      <p class="hero-subtitle">
+        Buy Apex Legends rank boosting, premium accounts, and pro coaching from verified Predator-level players. Secure, fast, and guaranteed.
+      </p>
+
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-number" data-count="15000">0</div>
+          <div class="hero-stat-label">Orders Done</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-number" data-count="850">0</div>
+          <div class="hero-stat-label">Active Sellers</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-number" data-count="99">0</div>
+          <div class="hero-stat-label">% Satisfaction</div>
+        </div>
+      </div>
+
+      <div class="hero-actions">
+        <a href="boosting.html" class="btn btn-primary btn-lg">
+          <i class="fas fa-rocket"></i> Start Boosting
+        </a>
+        <a href="accounts.html" class="btn btn-secondary btn-lg">
+          <i class="fas fa-store"></i> Browse Accounts
+        </a>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="hero-image-container">
+        <img src="rank_card.png" alt="Apex Legends Ranks">
+
+        <div class="hero-floating-card card-1">
+          <div class="floating-card-title">Orders Today</div>
+          <div class="floating-card-value">248</div>
+          <div class="floating-card-badge">+12% from yesterday</div>
+        </div>
+
+        <div class="hero-floating-card card-2">
+          <div class="floating-card-title">Avg. Delivery</div>
+          <div class="floating-card-value">2.4h</div>
+          <div class="floating-card-badge">Express Available</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SERVICES ==================== -->
+<section class="section" id="boosting">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">Our Services</div>
+      <h2 class="section-title">Everything You Need to <span class="text-gradient">Level Up</span></h2>
+      <p class="section-desc">Apex Legends boosting, account marketplace, and pro coaching all in one place.</p>
+    </div>
+
+    <div class="services-grid">
+      <!-- Rank Boosting -->
+      <a href="boosting.html" class="service-card featured">
+        <div class="service-card-icon">⚡</div>
+        <h3 class="service-card-title">Rank Boosting</h3>
+        <p class="service-card-desc">Get boosted to any rank by Predator-level players. Bronze to Predator, we cover every rank tier with guaranteed results.</p>
+        <div class="service-card-cta">
+          Get Boosted <i class="fas fa-arrow-right"></i>
+        </div>
+      </a>
+
+      <!-- Account Sales -->
+      <a href="accounts.html" class="service-card">
+        <div class="service-card-icon">🎮</div>
+        <h3 class="service-card-title">Account Marketplace</h3>
+        <p class="service-card-desc">Buy and sell premium Apex Legends accounts with rare skins, high KD ratios, and badges. All accounts are verified and secure.</p>
+        <div class="service-card-cta">
+          Browse Accounts <i class="fas fa-arrow-right"></i>
+        </div>
+      </a>
+
+      <!-- Coaching -->
+      <a href="coaching.html" class="service-card">
+        <div class="service-card-icon">🎯</div>
+        <h3 class="service-card-title">Pro Coaching</h3>
+        <p class="service-card-desc">1-on-1 sessions with Predator and Masters coaches. Improve your aim, movement, decision-making, and game sense.</p>
+        <div class="service-card-cta">
+          Find a Coach <i class="fas fa-arrow-right"></i>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== FEATURED LISTINGS ==================== -->
+<section class="section" id="featured" style="background: var(--bg-secondary); padding: 60px 0;">
+  <div class="container">
+    <div class="section-header" style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:16px;">
+      <div>
+        <div class="section-label">Marketplace</div>
+        <h2 class="section-title">Featured <span class="text-gradient">Listings</span></h2>
+      </div>
+      <div style="display:flex; gap:10px;">
+        <a href="accounts.html" class="btn btn-secondary btn-sm">View All Accounts</a>
+        <a href="boosting.html" class="btn btn-primary btn-sm">Get Boosted</a>
+      </div>
+    </div>
+
+    <div class="filters-bar">
+      <div class="filter-chip active" onclick="filterListings('all', this)">All</div>
+      <div class="filter-chip" onclick="filterListings('boosting', this)">Boosting</div>
+      <div class="filter-chip" onclick="filterListings('accounts', this)">Accounts</div>
+      <div class="filter-chip" onclick="filterListings('coaching', this)">Coaching</div>
+      <select class="sort-select" id="sortSelect" onchange="sortListings(this.value)">
+        <option value="featured">Featured</option>
+        <option value="price-low">Price: Low to High</option>
+        <option value="price-high">Price: High to Low</option>
+        <option value="rating">Top Rated</option>
+        <option value="newest">Newest First</option>
+      </select>
+    </div>
+
+    <div class="listings-grid" id="listingsGrid">
+      <!-- Cards injected by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ==================== HOW IT WORKS ==================== -->
+<section class="section">
+  <div class="container">
+    <div class="section-header text-center">
+      <div class="section-label">Process</div>
+      <h2 class="section-title">How NaviApex <span class="text-gradient">Works</span></h2>
+    </div>
+
+    <div class="steps-grid">
+      <div class="step-item">
+        <div class="step-number">1</div>
+        <h3 class="step-title">Choose a Service</h3>
+        <p class="step-desc">Browse boosting packages, accounts, or coaching sessions that fit your needs.</p>
+      </div>
+      <div class="step-item">
+        <div class="step-number">2</div>
+        <h3 class="step-title">Secure Payment</h3>
+        <p class="step-desc">Pay safely through our escrow system. Your money is held until you're satisfied.</p>
+      </div>
+      <div class="step-item">
+        <div class="step-number">3</div>
+        <h3 class="step-title">Service Delivery</h3>
+        <p class="step-desc">Your booster starts immediately. Track progress in real-time on your dashboard.</p>
+      </div>
+      <div class="step-item">
+        <div class="step-number">4</div>
+        <h3 class="step-title">Rate & Review</h3>
+        <p class="step-desc">Leave a review to help the community. Get your results guaranteed or money back.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== TRUST SECTION ==================== -->
+<section class="section" style="background: var(--bg-secondary);">
+  <div class="container">
+    <div class="section-header text-center">
+      <div class="section-label">Why NaviApex</div>
+      <h2 class="section-title">Trusted by <span class="text-gradient">Thousands</span> of Players</h2>
+    </div>
+
+    <div class="trust-grid">
+      <div class="trust-card">
+        <span class="trust-icon">🔒</span>
+        <h4 class="trust-title">Secure Escrow</h4>
+        <p class="trust-desc">Payments held in escrow until service is completed. Your money is always protected.</p>
+      </div>
+      <div class="trust-card">
+        <span class="trust-icon">✅</span>
+        <h4 class="trust-title">Verified Sellers</h4>
+        <p class="trust-desc">Every seller is manually vetted. Only Predator and Masters players can sell boosting.</p>
+      </div>
+      <div class="trust-card">
+        <span class="trust-icon">⚡</span>
+        <h4 class="trust-title">Fast Delivery</h4>
+        <p class="trust-desc">Average delivery in under 24 hours. Express options available for urgent orders.</p>
+      </div>
+      <div class="trust-card">
+        <span class="trust-icon">🎯</span>
+        <h4 class="trust-title">100% Guaranteed</h4>
+        <p class="trust-desc">If we don't deliver as promised, we offer a full refund. No questions asked.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== TESTIMONIALS ==================== -->
+<section class="section" id="testimonials">
+  <div class="container">
+    <div class="section-header text-center">
+      <div class="section-label">Reviews</div>
+      <h2 class="section-title">What Players <span class="text-gradient">Say</span></h2>
+    </div>
+
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"Got boosted from Gold to Diamond in 3 days. My booster was insane at the game and communicated everything. 100% recommend NaviApex!"</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">JK</div>
+          <div>
+            <div class="testimonial-name">Jake K.</div>
+            <div class="testimonial-rank">Boosted: Gold → Diamond</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"Bought a Masters account with amazing skins. The transfer was instant and everything was legit. Already playing ranked on it. NaviApex is the best!"</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">SR</div>
+          <div>
+            <div class="testimonial-name">Sarah R.</div>
+            <div class="testimonial-rank">Purchased Masters Account</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"The coaching session completely changed how I play Pathfinder. My coach broke down my gameplay and gave me specific tips. Worth every penny!"</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">MT</div>
+          <div>
+            <div class="testimonial-name">Marcus T.</div>
+            <div class="testimonial-rank">Coaching Session</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CTA ==================== -->
+<section class="section">
+  <div class="container">
+    <div class="cta-banner">
+      <h2 class="cta-title">Ready to <span class="text-gradient">Dominate?</span></h2>
+      <p class="cta-desc">Join 15,000+ players who have already leveled up with NaviApex. Sign up free and start your journey to the top.</p>
+      <div class="cta-buttons">
+        <a href="signup.html" class="btn btn-primary btn-lg">
+          <i class="fas fa-rocket"></i> Create Free Account
+        </a>
+        <a href="sell.html" class="btn btn-secondary btn-lg">
+          <i class="fas fa-tags"></i> Start Selling
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo-text">NAVI<span>APEX</span></div>
+        <p class="footer-brand-desc">The #1 Apex Legends marketplace for rank boosting, account trading, and pro coaching. Trusted by 15,000+ players worldwide.</p>
+        <div class="social-links">
+          <a href="#" class="social-link" title="Discord"><i class="fab fa-discord"></i></a>
+          <a href="#" class="social-link" title="Twitter"><i class="fab fa-twitter"></i></a>
+          <a href="#" class="social-link" title="YouTube"><i class="fab fa-youtube"></i></a>
+          <a href="#" class="social-link" title="Reddit"><i class="fab fa-reddit"></i></a>
+          <a href="#" class="social-link" title="Instagram"><i class="fab fa-instagram"></i></a>
+        </div>
+      </div>
+
+      <div>
+        <div class="footer-col-title">Services</div>
+        <div class="footer-links">
+          <a href="boosting.html" class="footer-link"><i class="fas fa-chevron-right" style="font-size:10px"></i> Rank Boosting</a>
+          <a href="accounts.html" class="footer-link"><i class="fas fa-chevron-right" style="font-size:10px"></i> Account Marketplace</a>
+          <a href="coaching.html" class="footer-link"><i class="fas fa-chevron-right" style="font-size:10px"></i> Pro Coaching</a>
+          <a href="sell.html" class="footer-link"><i class="fas fa-chevron-right" style="font-size:10px"></i> Sell Services</a>
+        </div>
+      </div>
+
+      <div>
+        <div class="footer-col-title">Support</div>
+        <div class="footer-links">
+          <a href="#" class="footer-link"><i class="fas fa-chevron-right" style="font-size:10px"></i> Help Center</a>
+          <a href="#" class="footer-link"><i class="fas fa-chevron-right" style="font-size:10px"></i> Live Chat</a>
+          <a href="#" class="footer-link"><i class="fas fa-chevron-right" style="font-size:10px"></i> Dispute Center</a>
+          <a href="#" class="footer-link"><i class="fas fa-chevron-right" style="font-size:10px"></i> Seller Rules</a>
+        </div>
+      </div>
+
+      <div>
+        <div class="footer-col-title">Company</div>
+        <div class="footer-links">
+          <a href="#" class="footer-link"><i class="fas fa-chevron-right" style="font-size:10px"></i> About Us</a>
+          <a href="#" class="footer-link"><i class="fas fa-chevron-right" style="font-size:10px"></i> Blog</a>
+          <a href="#" class="footer-link"><i class="fas fa-chevron-right" style="font-size:10px"></i> Careers</a>
+          <a href="#" class="footer-link"><i class="fas fa-chevron-right" style="font-size:10px"></i> Contact</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="footer-copyright">© 2026 NaviApex. All rights reserved. Not affiliated with EA or Respawn Entertainment.</div>
+      <div class="payment-icons">
+        <span class="payment-icon">VISA</span>
+        <span class="payment-icon">MC</span>
+        <span class="payment-icon">PayPal</span>
+        <span class="payment-icon">BTC</span>
+        <span class="payment-icon">ETH</span>
+      </div>
+      <div class="footer-legal">
+        <a href="#">Terms</a>
+        <a href="#">Privacy</a>
+        <a href="#">Cookies</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="app.js"></script>
+<script src="paypal.js"></script>
+<script>
+// Home page listings data
+const listings = [
+  {
+    id: 1, type: 'boosting',
+    title: 'Bronze → Diamond Rank Boost',
+    seller: 'NaviApex (Owner)', sellerInitials: 'NA',
+    badge: 'Predator', badgeClass: 'badge-predator',
+    rating: 4.9, reviews: 312,
+    price: 24.99, deliveryTime: '24h',
+    img: 'rank_card.png'
+  },
+  {
+    id: 2, type: 'accounts',
+    title: 'Masters Account – 3000+ Kills, Rare Skins',
+    seller: 'NaviApex (Owner)', sellerInitials: 'NA',
+    badge: 'Hot', badgeClass: 'badge-hot',
+    rating: 5.0, reviews: 87,
+    price: 89.99, deliveryTime: 'Instant',
+    img: 'rank_card.png'
+  },
+  {
+    id: 3, type: 'coaching',
+    title: 'Pro Coaching – 1 Hour Session with Predator',
+    seller: 'NaviApex (Owner)', sellerInitials: 'NA',
+    badge: 'New', badgeClass: 'badge-new',
+    rating: 4.8, reviews: 44,
+    price: 19.99, deliveryTime: 'Scheduled',
+    img: 'rank_card.png'
+  }
+];
+
+function renderListings(items) {
+  const grid = document.getElementById('listingsGrid');
+  grid.innerHTML = items.map(item => `
+    <div class="offer-card" data-type="${item.type}" onclick="viewListing(${item.id})">
+      <div class="offer-card-img">
+        <img src="${item.img}" alt="${item.title}">
+        <div class="offer-card-badge ${item.badgeClass}">${item.badge}</div>
+      </div>
+      <div class="offer-card-body">
+        <div class="offer-seller">
+          <a href="seller-profile.html" style="display:flex; align-items:center; gap:8px; text-decoration:none; color:inherit;">
+            <div class="seller-avatar">${item.sellerInitials}</div>
+            <span class="seller-name">${item.seller}</span>
+            <span class="seller-verified" title="Verified Seller">✓</span>
+          </a>
+        </div>
+        <h3 class="offer-title">${item.title}</h3>
+        <div class="offer-meta">
+          <span class="offer-rating">★ ${item.rating}</span>
+          <span>(${item.reviews} reviews)</span>
+          <span>• ${item.deliveryTime}</span>
+        </div>
+        <div class="offer-footer">
+          <div>
+            <div class="offer-price">$${item.price}</div>
+            <div class="offer-price-sub">Starting price</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); orderNow(${item.id})">
+            Order Now
+          </button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterListings(type, el) {
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  const filtered = type === 'all' ? listings : listings.filter(l => l.type === type);
+  renderListings(filtered);
+}
+
+function sortListings(val) {
+  let sorted = [...listings];
+  if (val === 'price-low') sorted.sort((a,b) => a.price - b.price);
+  else if (val === 'price-high') sorted.sort((a,b) => b.price - a.price);
+  else if (val === 'rating') sorted.sort((a,b) => b.rating - a.rating);
+  renderListings(sorted);
+}
+
+function viewListing(id) {
+  const listing = listings.find(l => l.id === id);
+  if (listing.type === 'boosting') window.location.href = 'boosting.html';
+  else if (listing.type === 'accounts') window.location.href = 'accounts.html';
+  else window.location.href = 'coaching.html';
+}
+
+function orderNow(id) {
+  const user = JSON.parse(localStorage.getItem('navipex_user') || 'null');
+  if (!user) {
+    showToast('Please sign in to place an order!', 'info');
+    setTimeout(() => window.location.href = 'login.html', 1200);
+    return;
+  }
+  showToast('Redirecting to order page...', 'success');
+  setTimeout(() => {
+    if (listings.find(l=>l.id===id).type === 'boosting') window.location.href = 'boosting.html';
+    else window.location.href = 'accounts.html';
+  }, 800);
+}
+
+// Init
+renderListings(listings);
+animateCounters();
+
+function scrollToSection(id) {
+  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+}
+</script>
+</body>
+</html>

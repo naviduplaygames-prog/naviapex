@@ -1,0 +1,72 @@
+Dear Navidu Mithsara,
+
+PLEASE READ THIS EMAIL IN FULL AND PRINT IT FOR YOUR RECORDS
+
+Thank you for your order from us! Your hosting account has now been setup and this email contains all the information you will need in order to begin using your account.
+
+If you have requested a domain name during sign up, please keep in mind that your domain name will not be visible on the internet instantly. This process is called propagation and can take up to 48 hours. Until your domain has propagated, your website and email will not function, we have provided a temporary url which you may use to view your website and upload files in the meantime.
+
+New Account Information
+
+Hosting Package: Business Starter
+Domain: naviapex.com
+First Payment Amount: Rs5500.00
+Recurring Amount: Rs5500.00
+Billing Cycle: Annually
+Next Due Date: Saturday, May 31st, 2025
+
+wps login : Admin@navi
+Nap@20019@2024
+
+Cpanel Login Details
+
+Username: naviapex
+Password: FNwlH;e;07L76d
+
+email login : 
+info@naviapex.com
+rG,$r*GvSoyT
+
+naviapex
+FNwlH;e;07L76d
+
+Control Panel URL: http://170.249.212.10:2082/
+Once your domain has propogated, you may also use http://www.naviapex.com:2082/
+
+Server Information
+
+Server Name: lk
+Server IP: 170.249.212.10
+
+If you are using an existing domain with your new hosting account, you will need to update the nameservers to point to the nameservers listed below.
+
+Nameserver 1: ns7.lkwebserver.com 
+Nameserver 2: ns8.lkwebserver.com
+
+Uploading Your Website
+
+Temporarily you may use one of the addresses given below to manage your web site:
+
+Temporary FTP Hostname: 170.249.212.10
+Temporary Webpage URL: http://170.249.212.10/~naviapex/
+
+And once your domain has propagated you may use the details below:
+info@naviapex.com
+
+FTP Hostname: naviapex.com
+Webpage URL: http://www.naviapex.com
+
+Email Settings
+
+For email accounts that you setup, you should use the following connection details in your email program:
+
+POP3 Host Address: mail.naviapex.com
+SMTP Host Address: mail.naviapex.com
+Username: The email address you are checking email for
+Password: As specified in your control panel
+
+Thank you for choosing us.
+
+---
+Hosting Master
+http://manage.hostingmaster.lk

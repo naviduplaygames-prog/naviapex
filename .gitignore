@@ -1,0 +1,10 @@
+node_modules/
+naviapex.db
+.env
+*.wpress
+*.psd
+*.zip
+Respawn-Esports-Gaming-WordPress-Theme-v1.5/
+TEAM/
+*.ai
+*.eps

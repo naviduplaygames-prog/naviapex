@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard – NaviApex</title>
+  <meta name="description" content="Manage your NaviApex orders, listings, and account settings.">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body { padding-top: var(--nav-height); }
+    .dash-page { display: none; }
+    .dash-page.active { display: block; animation: fade-up 0.3s ease; }
+    .avatar-circle {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: var(--gradient-red);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px; font-weight: 700;
+      border: 3px solid rgba(255,59,59,0.3);
+    }
+    .order-row {
+      display: flex; align-items: center; gap: 16px;
+      background: var(--bg-card); border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg); padding: 16px; margin-bottom: 10px;
+      transition: all 0.2s;
+    }
+    .order-row:hover { border-color: var(--border-hover); }
+    .order-icon { width: 44px; height: 44px; border-radius: var(--radius-md); background: rgba(255,59,59,0.1); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+    .order-info { flex: 1; min-width: 0; }
+    .order-title { font-size: 14px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .order-meta { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+    .notif-row { display: flex; align-items: flex-start; gap: 12px; padding: 14px; border-radius: var(--radius-md); border-bottom: 1px solid var(--border-color); transition: background 0.2s; cursor: pointer; }
+    .notif-row:hover { background: rgba(255,255,255,0.03); }
+    .notif-row.unread { background: rgba(255,59,59,0.04); border-left: 2px solid var(--apex-red); }
+    .notif-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--apex-red); margin-top: 6px; flex-shrink: 0; }
+    .progress-bar-wrap { background: var(--bg-surface); border-radius: 4px; height: 6px; overflow: hidden; }
+    .progress-bar-fill { height: 100%; background: var(--gradient-red); border-radius: 4px; transition: width 0.5s ease; }
+    .setting-row { display: flex; align-items: center; justify-content: space-between; padding: 18px 0; border-bottom: 1px solid var(--border-color); gap: 16px; }
+    .setting-row:last-child { border-bottom: none; }
+    .toggle-switch { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider { position: absolute; inset: 0; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 12px; cursor: pointer; transition: all 0.3s; }
+    .toggle-slider::before { content: ''; position: absolute; width: 18px; height: 18px; left: 2px; top: 2px; background: var(--text-muted); border-radius: 50%; transition: all 0.3s; }
+    .toggle-switch input:checked + .toggle-slider { background: var(--apex-red); border-color: var(--apex-red); }
+    .toggle-switch input:checked + .toggle-slider::before { transform: translateX(20px); background: #fff; }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="mainNav">
+  <div class="navbar-inner">
+    <a href="index.html" class="navbar-logo">
+      <img src="logo.png" alt="NaviApex">
+      <div class="navbar-logo-text">NAVI<span>APEX</span></div>
+    </a>
+    <div class="navbar-nav">
+      <a href="boosting.html" class="nav-link"><i class="fas fa-bolt"></i> Boosting</a>
+      <a href="accounts.html" class="nav-link"><i class="fas fa-shield-alt"></i> Accounts</a>
+      <a href="coaching.html" class="nav-link"><i class="fas fa-chalkboard-teacher"></i> Coaching</a>
+      <a href="sell.html" class="nav-link"><i class="fas fa-tags"></i> Sell</a>
+    </div>
+    <div class="navbar-actions" id="navActions"></div>
+    <div class="hamburger" id="hamburger" onclick="toggleMobileNav()"><span></span><span></span><span></span></div>
+  </div>
+</nav>
+<div class="mobile-nav-overlay" id="mobileNav">
+  <a href="index.html" class="mobile-nav-link"><i class="fas fa-home"></i> Home</a>
+  <a href="dashboard.html" class="mobile-nav-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+</div>
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- DASHBOARD LAYOUT -->
+<div class="dashboard-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <!-- User Profile -->
+      <div style="padding:0 12px 20px; border-bottom:1px solid var(--border-color); margin-bottom:16px;">
+        <div id="sidebarProfile" style="display:flex; align-items:center; gap:12px;">
+          <div class="avatar-circle" id="sidebarAvatar" style="width:44px; height:44px; font-size:16px;">?</div>
+          <div>
+            <div id="sidebarName" style="font-weight:700; font-size:14px;">Loading...</div>
+            <div id="sidebarRole" style="font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Member</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-label">Main</div>
+      <div class="sidebar-link active" id="nav-overview" onclick="switchPage('overview')">
+        <span class="sidebar-icon"><i class="fas fa-tachometer-alt"></i></span> Overview
+      </div>
+      <div class="sidebar-link" id="nav-orders" onclick="switchPage('orders')">
+        <span class="sidebar-icon"><i class="fas fa-box"></i></span> My Orders
+        <span id="ordersBadge" style="margin-left:auto; background:var(--apex-red); color:#fff; font-size:10px; font-weight:700; padding:1px 6px; border-radius:8px;"></span>
+      </div>
+      <div class="sidebar-link" id="nav-listings" onclick="switchPage('listings')">
+        <span class="sidebar-icon"><i class="fas fa-tags"></i></span> My Listings
+      </div>
+      <div class="sidebar-link" id="nav-wallet" onclick="switchPage('wallet')">
+        <span class="sidebar-icon"><i class="fas fa-wallet"></i></span> Wallet
+      </div>
+      <div class="sidebar-link" id="nav-messages" onclick="switchPage('messages')">
+        <span class="sidebar-icon"><i class="fas fa-comments"></i></span> Messages
+        <span style="margin-left:auto; background:var(--apex-red); color:#fff; font-size:10px; font-weight:700; padding:1px 6px; border-radius:8px;">3</span>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">Account</div>
+      <div class="sidebar-link" id="nav-notifications" onclick="switchPage('notifications')">
+        <span class="sidebar-icon"><i class="fas fa-bell"></i></span> Notifications
+      </div>
+      <div class="sidebar-link" id="nav-settings" onclick="switchPage('settings')">
+        <span class="sidebar-icon"><i class="fas fa-cog"></i></span> Settings
+      </div>
+    </div>
+
+    <div class="sidebar-section" style="margin-top:auto; padding-top:16px; border-top:1px solid var(--border-color);">
+      <a href="index.html" class="sidebar-link" style="color:var(--text-secondary);">
+        <span class="sidebar-icon"><i class="fas fa-store"></i></span> Browse Marketplace
+      </a>
+      <div class="sidebar-link" onclick="logout()" style="color:var(--apex-red); cursor:pointer;">
+        <span class="sidebar-icon"><i class="fas fa-sign-out-alt"></i></span> Sign Out
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="dashboard-content">
+
+    <!-- ========== OVERVIEW PAGE ========== -->
+    <div class="dash-page active" id="page-overview">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:28px; flex-wrap:wrap; gap:12px;">
+        <div>
+          <h1 style="font-family:'Orbitron',monospace; font-size:24px; font-weight:700;" id="welcomeTitle">Welcome back! 👋</h1>
+          <p style="font-size:14px; color:var(--text-muted); margin-top:4px;" id="welcomeSub">Here's a summary of your activity.</p>
+        </div>
+        <a href="create-listing.html" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> New Listing</a>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-card-icon">📦</div>
+          <div class="stat-card-value" id="statOrders">0</div>
+          <div class="stat-card-label">Total Orders</div>
+          <div class="stat-card-change change-positive">↑ Active on platform</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon">💰</div>
+          <div class="stat-card-value" id="statBalance">$0</div>
+          <div class="stat-card-label">Wallet Balance</div>
+          <div class="stat-card-change change-positive">Available to withdraw</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon">⭐</div>
+          <div class="stat-card-value" id="statRating">—</div>
+          <div class="stat-card-label">Seller Rating</div>
+          <div class="stat-card-change">Based on reviews</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon">📋</div>
+          <div class="stat-card-value" id="statListings">0</div>
+          <div class="stat-card-label">My Listings</div>
+          <div class="stat-card-change">Active & Pending</div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:32px;">
+        <a href="boosting.html" class="service-card" style="padding:20px; text-align:center;">
+          <div style="font-size:30px; margin-bottom:8px;">⚡</div>
+          <div style="font-family:'Rajdhani',sans-serif; font-size:15px; font-weight:700;">Get Boosted</div>
+        </a>
+        <a href="accounts.html" class="service-card" style="padding:20px; text-align:center;">
+          <div style="font-size:30px; margin-bottom:8px;">🎮</div>
+          <div style="font-family:'Rajdhani',sans-serif; font-size:15px; font-weight:700;">Buy Account</div>
+        </a>
+        <a href="coaching.html" class="service-card" style="padding:20px; text-align:center;">
+          <div style="font-size:30px; margin-bottom:8px;">🎯</div>
+          <div style="font-family:'Rajdhani',sans-serif; font-size:15px; font-weight:700;">Get Coaching</div>
+        </a>
+      </div>
+
+      <!-- Recent Orders Preview -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+        <div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <h3 style="font-family:'Rajdhani',sans-serif; font-size:18px; font-weight:700;">Recent Orders</h3>
+            <button class="btn btn-ghost btn-sm" onclick="switchPage('orders')">View All</button>
+          </div>
+          <div id="recentOrdersList">
+            <div style="text-align:center; padding:30px; color:var(--text-muted);">
+              <div style="font-size:36px; margin-bottom:8px;">📭</div>
+              <div style="font-size:14px;">No orders yet</div>
+              <a href="boosting.html" class="btn btn-primary btn-sm" style="margin-top:12px;">Place First Order</a>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <h3 style="font-family:'Rajdhani',sans-serif; font-size:18px; font-weight:700;">Account Progress</h3>
+          </div>
+          <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-xl); padding:24px;">
+            <div style="margin-bottom:20px;">
+              <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:8px;">
+                <span>Profile Completion</span>
+                <span style="color:var(--apex-red); font-weight:700;" id="profilePct">0%</span>
+              </div>
+              <div class="progress-bar-wrap"><div class="progress-bar-fill" id="profileBar" style="width:0%"></div></div>
+            </div>
+            <div style="margin-bottom:20px;">
+              <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:8px;">
+                <span>Verification Level</span>
+                <span style="color:var(--apex-gold); font-weight:700;">Basic</span>
+              </div>
+              <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:33%; background:linear-gradient(135deg,#ffd700,#ff8c00);"></div></div>
+            </div>
+            <div style="margin-bottom:8px;">
+              <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:8px;">
+                <span>Trust Score</span>
+                <span style="color:#00ff64; font-weight:700;">New Member</span>
+              </div>
+              <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:15%; background:linear-gradient(135deg,#00ff64,#00b84d);"></div></div>
+            </div>
+
+            <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--border-color);">
+              <div style="font-size:12px; color:var(--text-muted); margin-bottom:10px; text-transform:uppercase; letter-spacing:0.5px;">Recommended Actions</div>
+              <div style="display:flex; flex-direction:column; gap:8px;" id="actionItems"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== ORDERS PAGE ========== -->
+    <div class="dash-page" id="page-orders">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:28px;">
+        <h1 style="font-family:'Orbitron',monospace; font-size:22px; font-weight:700;">My Orders</h1>
+        <div style="display:flex; gap:10px;">
+          <select class="sort-select" id="orderStatusFilter" onchange="renderOrdersPage()">
+            <option value="all">All Orders</option>
+            <option value="pending">Pending</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="ordersTableContainer">
+        <div style="text-align:center; padding:60px; color:var(--text-muted); background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-xl);">
+          <div style="font-size:56px; margin-bottom:16px;">📦</div>
+          <div style="font-size:18px; font-weight:600; margin-bottom:8px;">No Orders Yet</div>
+          <div style="font-size:14px; margin-bottom:24px;">Ready to level up your Apex game?</div>
+          <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+            <a href="boosting.html" class="btn btn-primary"><i class="fas fa-rocket"></i> Get Boosted</a>
+            <a href="accounts.html" class="btn btn-secondary"><i class="fas fa-shield-alt"></i> Buy Account</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== LISTINGS PAGE ========== -->
+    <div class="dash-page" id="page-listings">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:28px;">
+        <h1 style="font-family:'Orbitron',monospace; font-size:22px; font-weight:700;">My Listings</h1>
+        <a href="create-listing.html" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> New Listing</a>
+      </div>
+      <div id="listingsContainer">
+        <div style="text-align:center; padding:60px; color:var(--text-muted); background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-xl);">
+          <div style="font-size:56px; margin-bottom:16px;">🏪</div>
+          <div style="font-size:18px; font-weight:600; margin-bottom:8px;">No Listings Yet</div>
+          <div style="font-size:14px; margin-bottom:24px;">Start selling your Apex skills and earn money!</div>
+          <a href="sell.html" class="btn btn-primary"><i class="fas fa-tags"></i> Create Listing</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== WALLET PAGE ========== -->
+    <div class="dash-page" id="page-wallet">
+      <h1 style="font-family:'Orbitron',monospace; font-size:22px; font-weight:700; margin-bottom:28px;">Wallet</h1>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:32px;">
+        <div style="background:linear-gradient(135deg,#1a0a0f,#0f0f1a); border:1px solid rgba(255,59,59,0.3); border-radius:var(--radius-xl); padding:32px; position:relative; overflow:hidden;">
+          <div style="position:absolute; top:-30px; right:-30px; width:120px; height:120px; background:radial-gradient(circle,rgba(255,59,59,0.15),transparent); border-radius:50%;"></div>
+          <div style="font-size:13px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Available Balance</div>
+          <div style="font-family:'Orbitron',monospace; font-size:40px; font-weight:800; color:var(--apex-red);" id="walletBalance">$0.00</div>
+          <div style="font-size:13px; color:var(--text-muted); margin-top:8px;">Ready to withdraw</div>
+          <button class="btn btn-primary" style="margin-top:20px;" onclick="showToast('Withdrawal feature coming soon!','info')">
+            <i class="fas fa-arrow-up"></i> Withdraw
+          </button>
+        </div>
+
+        <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-xl); padding:32px;">
+          <div style="font-size:13px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:16px;">Add Funds</div>
+          <div class="form-group">
+            <label class="form-label">Amount (USD)</label>
+            <input type="number" class="form-input" id="depositAmount" placeholder="e.g. 50.00" min="5" step="0.01">
+          </div>
+          <div style="display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;">
+            <button class="filter-chip" onclick="setDeposit(10)">$10</button>
+            <button class="filter-chip" onclick="setDeposit(25)">$25</button>
+            <button class="filter-chip" onclick="setDeposit(50)">$50</button>
+            <button class="filter-chip" onclick="setDeposit(100)">$100</button>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:16px;">
+            <button class="btn btn-ghost btn-sm" onclick="showToast('PayPal payment coming soon!','info')"><i class="fab fa-paypal"></i> PayPal</button>
+            <button class="btn btn-ghost btn-sm" onclick="showToast('Card payment coming soon!','info')"><i class="fas fa-credit-card"></i> Card</button>
+            <button class="btn btn-ghost btn-sm" onclick="showToast('Crypto coming soon!','info')">₿ Bitcoin</button>
+            <button class="btn btn-ghost btn-sm" onclick="showToast('Crypto coming soon!','info')">Ξ Ethereum</button>
+          </div>
+          <button class="btn btn-primary" style="width:100%;" onclick="showToast('Payment gateway coming soon!','info')">
+            <i class="fas fa-lock"></i> Add Funds Securely
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <h3 style="font-family:'Rajdhani',sans-serif; font-size:18px; font-weight:700; margin-bottom:16px;">Transaction History</h3>
+        <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-xl); padding:40px; text-align:center; color:var(--text-muted);">
+          <div style="font-size:36px; margin-bottom:8px;">📊</div>
+          <div style="font-size:14px;">No transactions yet. Make your first purchase!</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== MESSAGES PAGE ========== -->
+    <div class="dash-page" id="page-messages">
+      <h1 style="font-family:'Orbitron',monospace; font-size:22px; font-weight:700; margin-bottom:28px;">Messages</h1>
+      <div style="display:grid; grid-template-columns:280px 1fr; gap:20px; min-height:500px;">
+        <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-xl); overflow:hidden;">
+          <div style="padding:16px; border-bottom:1px solid var(--border-color); font-size:13px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Conversations</div>
+          <div id="conversationList">
+            <div class="notif-row unread" onclick="openChat('NaviApex Support')">
+              <div style="width:36px; height:36px; border-radius:50%; background:var(--gradient-red); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;">NS</div>
+              <div style="flex:1; min-width:0;">
+                <div style="font-size:13px; font-weight:700;">NaviApex Support</div>
+                <div style="font-size:12px; color:var(--text-muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">Welcome! How can we help?</div>
+              </div>
+              <div class="notif-dot"></div>
+            </div>
+            <div class="notif-row" onclick="openChat('ApexPredX')">
+              <div style="width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#ff4400,#c00); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;">AP</div>
+              <div style="flex:1;">
+                <div style="font-size:13px; font-weight:700;">ApexPredX</div>
+                <div style="font-size:12px; color:var(--text-muted);">Ready to start your boost!</div>
+              </div>
+            </div>
+            <div class="notif-row" onclick="openChat('CoachWraith')">
+              <div style="width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#9b59b6,#6c3483); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;">CW</div>
+              <div style="flex:1;">
+                <div style="font-size:13px; font-weight:700;">CoachWraith</div>
+                <div style="font-size:12px; color:var(--text-muted);">Session confirmed for tomorrow!</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-xl); display:flex; flex-direction:column;" id="chatWindow">
+          <div style="padding:16px; border-bottom:1px solid var(--border-color); display:flex; align-items:center; gap:12px;" id="chatHeader">
+            <div style="font-size:24px; margin:auto; color:var(--text-muted);">💬</div>
+          </div>
+          <div style="flex:1; padding:24px; display:flex; align-items:center; justify-content:center;" id="chatMessages">
+            <div style="text-align:center; color:var(--text-muted);">
+              <div style="font-size:48px; margin-bottom:12px;">💬</div>
+              <div style="font-size:15px;">Select a conversation to start messaging</div>
+            </div>
+          </div>
+          <div style="padding:16px; border-top:1px solid var(--border-color); display:flex; gap:10px;" id="chatInputArea" style="display:none;">
+            <input type="text" class="form-input" id="chatInput" placeholder="Type a message..." style="flex:1;">
+            <button class="btn btn-primary btn-sm" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== NOTIFICATIONS PAGE ========== -->
+    <div class="dash-page" id="page-notifications">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:28px;">
+        <h1 style="font-family:'Orbitron',monospace; font-size:22px; font-weight:700;">Notifications</h1>
+        <button class="btn btn-ghost btn-sm" onclick="markAllRead()">Mark All Read</button>
+      </div>
+      <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-xl); overflow:hidden;" id="notificationsContainer">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <!-- ========== SETTINGS PAGE ========== -->
+    <div class="dash-page" id="page-settings">
+      <h1 style="font-family:'Orbitron',monospace; font-size:22px; font-weight:700; margin-bottom:28px;">Account Settings</h1>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+        <!-- Profile -->
+        <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-xl); padding:28px;">
+          <h3 style="font-family:'Rajdhani',sans-serif; font-size:18px; font-weight:700; margin-bottom:20px; padding-bottom:12px; border-bottom:1px solid var(--border-color);">Profile Settings</h3>
+          <div style="text-align:center; margin-bottom:24px;">
+            <div class="avatar-circle" style="margin:0 auto 12px; font-size:24px;" id="settingsAvatar">?</div>
+            <button class="btn btn-ghost btn-sm" onclick="showToast('Avatar upload coming soon!','info')">Change Avatar</button>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Username</label>
+            <input type="text" class="form-input" id="settingsUsername">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-input" id="settingsEmail">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Apex Legends Username</label>
+            <input type="text" class="form-input" id="settingsApex" placeholder="Your in-game name">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Bio</label>
+            <textarea class="form-input" id="settingsBio" rows="3" placeholder="Tell other players about yourself..."></textarea>
+          </div>
+          <button class="btn btn-primary" style="width:100%;" onclick="saveProfile()">
+            <i class="fas fa-save"></i> Save Profile
+          </button>
+        </div>
+
+        <!-- Security & Preferences -->
+        <div style="display:flex; flex-direction:column; gap:20px;">
+          <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-xl); padding:28px;">
+            <h3 style="font-family:'Rajdhani',sans-serif; font-size:18px; font-weight:700; margin-bottom:20px; padding-bottom:12px; border-bottom:1px solid var(--border-color);">Security</h3>
+            <div class="form-group">
+              <label class="form-label">New Password</label>
+              <input type="password" class="form-input" id="settingsNewPass" placeholder="Leave blank to keep current">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Confirm New Password</label>
+              <input type="password" class="form-input" id="settingsConfirmPass" placeholder="Confirm new password">
+            </div>
+            <button class="btn btn-secondary" style="width:100%;" onclick="changePassword()">
+              <i class="fas fa-lock"></i> Update Password
+            </button>
+          </div>
+
+          <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-xl); padding:28px;">
+            <h3 style="font-family:'Rajdhani',sans-serif; font-size:18px; font-weight:700; margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--border-color);">Preferences</h3>
+
+            <div class="setting-row">
+              <div>
+                <div style="font-size:14px; font-weight:600;">Email Notifications</div>
+                <div style="font-size:12px; color:var(--text-muted);">Order updates & promotions</div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" checked>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-row">
+              <div>
+                <div style="font-size:14px; font-weight:600;">Order Alerts</div>
+                <div style="font-size:12px; color:var(--text-muted);">Real-time order notifications</div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" checked>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-row">
+              <div>
+                <div style="font-size:14px; font-weight:600;">Profile Visibility</div>
+                <div style="font-size:12px; color:var(--text-muted);">Show your profile to buyers</div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" checked>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-row">
+              <div>
+                <div style="font-size:14px; font-weight:600;">Two-Factor Auth</div>
+                <div style="font-size:12px; color:var(--text-muted);">Extra account security</div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div style="background:rgba(255,59,59,0.05); border:1px solid rgba(255,59,59,0.2); border-radius:var(--radius-xl); padding:24px;">
+            <h3 style="font-family:'Rajdhani',sans-serif; font-size:16px; font-weight:700; color:var(--apex-red); margin-bottom:12px;">Danger Zone</h3>
+            <p style="font-size:13px; color:var(--text-secondary); margin-bottom:16px;">These actions cannot be undone. Please be careful.</p>
+            <button class="btn btn-secondary" style="width:100%; margin-bottom:8px;" onclick="showToast('Account data exported!','info')">
+              <i class="fas fa-download"></i> Export My Data
+            </button>
+            <button class="btn" style="width:100%; background:rgba(255,59,59,0.1); color:var(--apex-red); border:1px solid rgba(255,59,59,0.3);" onclick="confirmDelete()">
+              <i class="fas fa-trash"></i> Delete Account
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="app.js"></script>
+<script>
+// ---- AUTH GUARD ----
+const user = getUser();
+if (!user) { window.location.href = 'login.html'; }
+
+// ---- POPULATE UI ----
+function populateUI() {
+  if (!user) return;
+  const initials = user.initials || user.username.slice(0,2).toUpperCase();
+  document.getElementById('sidebarAvatar').textContent = initials;
+  document.getElementById('sidebarName').textContent = user.username;
+  document.getElementById('sidebarRole').textContent = user.role === 'owner' ? '👑 Owner' : user.role === 'seller' ? 'Seller' : 'Member';
+  document.getElementById('welcomeTitle').textContent = `Welcome back, ${user.username}! 👋`;
+  document.getElementById('settingsAvatar').textContent = initials;
+  document.getElementById('settingsUsername').value = user.username;
+  document.getElementById('settingsEmail').value = user.email;
+
+  const orders = getOrders().filter(o => o.buyer === user.username);
+  const myListings = getListings().filter(l => l.seller === user.username);
+
+  document.getElementById('statOrders').textContent = orders.length;
+  document.getElementById('statBalance').textContent = `$${(user.balance || 0).toFixed(2)}`;
+  document.getElementById('statRating').textContent = user.rating > 0 ? `${user.rating}⭐` : '—';
+  document.getElementById('statListings').textContent = myListings.length;
+  document.getElementById('walletBalance').textContent = `$${(user.balance || 0).toFixed(2)}`;
+  document.getElementById('ordersBadge').textContent = orders.filter(o=>o.status==='pending').length || '';
+
+  // Profile completion
+  let pct = 20;
+  if (user.email) pct += 20;
+  if (user.username) pct += 20;
+  if (user.apexUsername) pct += 20;
+  if (user.bio) pct += 20;
+  document.getElementById('profilePct').textContent = pct + '%';
+  document.getElementById('profileBar').style.width = pct + '%';
+
+  // Recommended actions
+  const actions = [];
+  if (!user.apexUsername) actions.push({icon:'🎮', text:'Add Apex Legends username', action: "switchPage('settings')"});
+  if (!user.bio) actions.push({icon:'✍️', text:'Complete your profile bio', action: "switchPage('settings')"});
+  if (orders.length === 0) actions.push({icon:'⚡', text:'Place your first order', action: "window.location.href='boosting.html'"});
+  document.getElementById('actionItems').innerHTML = (actions.length ? actions : [{icon:'✅', text:'Profile looks great!', action:''}]).slice(0,3).map(a => `
+    <div style="display:flex; align-items:center; gap:10px; font-size:13px; padding:8px; background:var(--bg-surface); border-radius:var(--radius-md); cursor:pointer;" onclick="${a.action}">
+      <span>${a.icon}</span><span style="color:var(--text-secondary);">${a.text}</span>
+      ${a.action ? '<i class="fas fa-chevron-right" style="margin-left:auto; font-size:10px; color:var(--text-muted);"></i>' : ''}
+    </div>
+  `).join('');
+
+  renderRecentOrders(orders);
+  renderOrdersPage();
+  renderListingsPage(myListings);
+  renderNotifications();
+}
+
+function renderRecentOrders(orders) {
+  const el = document.getElementById('recentOrdersList');
+  if (!orders.length) { el.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-muted);"><div style="font-size:36px; margin-bottom:8px;">📭</div><div style="font-size:14px;">No orders yet</div><a href="boosting.html" class="btn btn-primary btn-sm" style="margin-top:12px;">Place First Order</a></div>'; return; }
+  const icons = {boosting:'⚡', accounts:'🎮', coaching:'🎯'};
+  el.innerHTML = orders.slice(0,4).map(o => `
+    <div class="order-row">
+      <div class="order-icon">${icons[o.type] || '📦'}</div>
+      <div class="order-info">
+        <div class="order-title">${o.title || `${o.from || ''} → ${o.to || ''} Boost`}</div>
+        <div class="order-meta">${o.id} · ${new Date(o.date).toLocaleDateString()}</div>
+      </div>
+      <div>
+        <span class="status-badge status-${o.status}">${o.status}</span>
+        <div style="font-size:12px; font-weight:700; color:var(--apex-red); margin-top:4px; text-align:right;">$${o.price}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderOrdersPage() {
+  const statusFilter = document.getElementById('orderStatusFilter')?.value || 'all';
+  const orders = getOrders().filter(o => o.buyer === user.username);
+  const filtered = statusFilter === 'all' ? orders : orders.filter(o => o.status === statusFilter);
+  const el = document.getElementById('ordersTableContainer');
+  if (!filtered.length) {
+    el.innerHTML = `<div style="text-align:center; padding:60px; color:var(--text-muted); background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-xl);"><div style="font-size:56px; margin-bottom:16px;">📦</div><div style="font-size:18px; font-weight:600; margin-bottom:8px;">No ${statusFilter === 'all' ? '' : statusFilter+' '}orders</div><div style="display:flex; gap:12px; justify-content:center; margin-top:16px; flex-wrap:wrap;"><a href="boosting.html" class="btn btn-primary"><i class="fas fa-rocket"></i> Get Boosted</a><a href="accounts.html" class="btn btn-secondary"><i class="fas fa-shield-alt"></i> Buy Account</a></div></div>`;
+    return;
+  }
+  const icons = {boosting:'⚡', accounts:'🎮', coaching:'🎯'};
+  el.innerHTML = `<div style="overflow-x:auto;"><table class="data-table">
+    <thead><tr><th>Order ID</th><th>Service</th><th>Type</th><th>Price</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+    <tbody>${filtered.map(o => `
+      <tr>
+        <td style="font-family:'Orbitron',monospace; font-size:12px;">${o.id}</td>
+        <td>${icons[o.type] || '📦'} ${o.title || `${o.from || '?'} → ${o.to || '?'}`}</td>
+        <td><span class="specialty-tag" style="font-size:11px;">${o.type}</span></td>
+        <td style="color:var(--apex-red); font-weight:700;">$${o.price}</td>
+        <td style="color:var(--text-muted); font-size:13px;">${new Date(o.date).toLocaleDateString()}</td>
+        <td><span class="status-badge status-${o.status}">${o.status}</span></td>
+        <td><button class="btn btn-ghost btn-sm" onclick="showToast('Order details coming soon!','info')">Details</button></td>
+      </tr>
+    `).join('')}</tbody>
+  </table></div>`;
+}
+
+function renderListingsPage(listings) {
+  const el = document.getElementById('listingsContainer');
+  if (!listings.length) {
+    el.innerHTML = '<div style="text-align:center; padding:60px; color:var(--text-muted); background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-xl);"><div style="font-size:56px; margin-bottom:16px;">🏪</div><div style="font-size:18px; font-weight:600; margin-bottom:8px;">No listings yet</div><a href="sell.html" class="btn btn-primary" style="margin-top:16px;"><i class="fas fa-tags"></i> Create Listing</a></div>';
+    return;
+  }
+  el.innerHTML = `<div style="overflow-x:auto;"><table class="data-table">
+    <thead><tr><th>Title</th><th>Type</th><th>Price</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+    <tbody>${listings.map(l => `
+      <tr>
+        <td style="font-weight:600;">${l.title}</td>
+        <td><span class="specialty-tag" style="font-size:11px;">${l.type}</span></td>
+        <td style="color:var(--apex-red); font-weight:700;">$${l.price}</td>
+        <td><span class="status-badge status-${l.status}">${l.status}</span></td>
+        <td style="color:var(--text-muted); font-size:13px;">${new Date(l.date).toLocaleDateString()}</td>
+        <td><button class="btn btn-ghost btn-sm" onclick="showToast('Edit coming soon!','info')">Edit</button></td>
+      </tr>
+    `).join('')}</tbody>
+  </table></div>`;
+}
+
+const allNotifs = [
+  { id:1, icon:'🎉', title:'Welcome to NaviApex!', body:'Your account is ready. Start browsing our marketplace!', time:'Just now', unread:true },
+  { id:2, icon:'✅', title:'Account Verified', body:'Your email has been verified successfully.', time:'1 hour ago', unread:true },
+  { id:3, icon:'🎮', title:'New Account Listed', body:'Check out the latest Predator accounts in the marketplace.', time:'2 hours ago', unread:false },
+  { id:4, icon:'💰', title:'Deposit Bonus', body:'Add funds and get 5% bonus on first deposit!', time:'1 day ago', unread:false },
+];
+
+function renderNotifications() {
+  document.getElementById('notificationsContainer').innerHTML = allNotifs.map(n => `
+    <div class="notif-row ${n.unread ? 'unread' : ''}" onclick="markRead(${n.id})">
+      <div style="font-size:24px; flex-shrink:0;">${n.icon}</div>
+      <div style="flex:1;">
+        <div style="font-size:14px; font-weight:700; margin-bottom:3px;">${n.title}</div>
+        <div style="font-size:13px; color:var(--text-secondary);">${n.body}</div>
+        <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">${n.time}</div>
+      </div>
+      ${n.unread ? '<div class="notif-dot"></div>' : ''}
+    </div>
+  `).join('');
+}
+
+function markRead(id) {
+  const n = allNotifs.find(n => n.id === id);
+  if (n) { n.unread = false; renderNotifications(); }
+}
+
+function markAllRead() {
+  allNotifs.forEach(n => n.unread = false);
+  renderNotifications();
+  showToast('All notifications marked as read.', 'info');
+}
+
+// ---- NAV ----
+function switchPage(page) {
+  document.querySelectorAll('.dash-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+  document.getElementById(`page-${page}`)?.classList.add('active');
+  document.getElementById(`nav-${page}`)?.classList.add('active');
+  window.scrollTo({top:0});
+}
+
+// ---- PROFILE ----
+function saveProfile() {
+  const username = document.getElementById('settingsUsername').value.trim();
+  const email = document.getElementById('settingsEmail').value.trim();
+  const apexUsername = document.getElementById('settingsApex').value.trim();
+  const bio = document.getElementById('settingsBio').value.trim();
+  if (!username || !email) { showToast('Username and email are required!','error'); return; }
+  const updated = { ...user, username, email, apexUsername, bio, initials: username.slice(0,2).toUpperCase() };
+  setUser(updated);
+  showToast('Profile saved successfully! ✅','success');
+  setTimeout(() => location.reload(), 800);
+}
+
+function changePassword() {
+  const np = document.getElementById('settingsNewPass').value;
+  const cp = document.getElementById('settingsConfirmPass').value;
+  if (!np) { showToast('Enter a new password.','error'); return; }
+  if (np !== cp) { showToast('Passwords do not match!','error'); return; }
+  if (np.length < 8) { showToast('Password must be 8+ characters.','error'); return; }
+  const updated = { ...user, password: np };
+  setUser(updated);
+  showToast('Password updated! 🔒','success');
+  document.getElementById('settingsNewPass').value = '';
+  document.getElementById('settingsConfirmPass').value = '';
+}
+
+function confirmDelete() {
+  if (confirm('⚠️ Are you sure you want to delete your account? This action cannot be undone!')) {
+    localStorage.removeItem('navipex_user');
+    showToast('Account deleted. Goodbye!','info');
+    setTimeout(()=>window.location.href='index.html',1500);
+  }
+}
+
+// ---- WALLET ----
+function setDeposit(amount) { document.getElementById('depositAmount').value = amount; }
+
+// ---- MESSAGES ----
+const chatLogs = {
+  'NaviApex Support': [
+    {from:'system', text:'Welcome to NaviApex! 🎮 How can we help you today?'},
+    {from:'system', text:'Our support team is available 24/7. Feel free to ask anything!'},
+  ],
+  'ApexPredX': [
+    {from:'other', text:'Hey! I\'ve received your boost order. Ready to start anytime!'},
+    {from:'other', text:'Just need your login details via our secure system.'},
+  ],
+  'CoachWraith': [
+    {from:'other', text:'Session confirmed! See you tomorrow at the scheduled time.'},
+    {from:'other', text:'Please add me on Discord: CoachWraith#2024'},
+  ],
+};
+let currentChat = null;
+
+function openChat(name) {
+  currentChat = name;
+  document.getElementById('chatHeader').innerHTML = `
+    <div style="width:36px; height:36px; border-radius:50%; background:var(--gradient-red); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700;">${name.slice(0,2).toUpperCase()}</div>
+    <div><div style="font-size:14px; font-weight:700;">${name}</div><div style="font-size:12px; color:#00ff64;">● Online</div></div>
+  `;
+  const logs = chatLogs[name] || [];
+  document.getElementById('chatMessages').innerHTML = `<div style="display:flex; flex-direction:column; gap:12px; padding:20px;">${logs.map(m => `
+    <div style="display:flex; justify-content:${m.from==='me'?'flex-end':'flex-start'};">
+      <div style="max-width:70%; background:${m.from==='me'?'var(--gradient-button)':'var(--bg-surface)'}; border:${m.from==='me'?'none':'1px solid var(--border-color)'}; border-radius:${m.from==='me'?'14px 14px 4px 14px':'14px 14px 14px 4px'}; padding:10px 14px; font-size:14px; color:${m.from==='me'?'#fff':'var(--text-primary)'}; line-height:1.5;">
+        ${m.text}
+      </div>
+    </div>
+  `).join('')}</div>`;
+  document.getElementById('chatInputArea').style.display = 'flex';
+  document.getElementById('chatMessages').scrollTop = 999999;
+}
+
+function sendMessage() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text || !currentChat) return;
+  chatLogs[currentChat] = chatLogs[currentChat] || [];
+  chatLogs[currentChat].push({from:'me', text});
+  input.value = '';
+  openChat(currentChat);
+  setTimeout(() => {
+    chatLogs[currentChat].push({from:'other', text:'Thanks for your message! I\'ll get back to you shortly.'});
+    openChat(currentChat);
+  }, 1200);
+}
+
+document.getElementById('chatInput')?.addEventListener('keydown', e => { if(e.key==='Enter') sendMessage(); });
+
+// ---- URL HASH ROUTING ----
+function routeFromHash() {
+  const hash = window.location.hash.replace('#','');
+  if (['overview','orders','listings','wallet','messages','notifications','settings'].includes(hash)) {
+    switchPage(hash);
+  }
+}
+
+// ---- INIT ----
+populateUI();
+routeFromHash();
+</script>
+</body>
+</html>
