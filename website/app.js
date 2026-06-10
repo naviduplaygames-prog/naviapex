@@ -50,7 +50,7 @@ function renderNav() {
           <i class="fas fa-chevron-down" style="font-size:10px; color:var(--text-muted)"></i>
         </div>
         <div class="user-dropdown" id="userDropdown">
-          ${isOwner ? `<div class="dropdown-item owner-badge"><i class="fas fa-crown"></i> Owner Panel <a href="admin.html" style="margin-left:auto; font-size:11px; color: var(--apex-gold);">Open →</a></div><div class="dropdown-divider"></div>` : ''}
+          ${isOwner ? `<div class="dropdown-item owner-badge"><i class="fas fa-crown"></i> Owner Panel <a href="dashboard.html" style="margin-left:auto; font-size:11px; color: var(--apex-gold);">Open →</a></div><div class="dropdown-divider"></div>` : ''}
           <a href="dashboard.html" class="dropdown-item"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
           <a href="dashboard.html#orders" class="dropdown-item"><i class="fas fa-box"></i> My Orders</a>
           <a href="sell.html" class="dropdown-item"><i class="fas fa-tags"></i> My Listings</a>
@@ -320,6 +320,41 @@ async function loginUser(emailOrUsername, password) {
   } catch (err) {
     return { success: false, error: 'Server connection failed.' };
   }
+}
+
+// ==========================================
+// MESSAGES MANAGEMENT
+// ==========================================
+
+async function getConversationsAPI() {
+  try {
+    const res = await fetch('/api/messages/conversations', {
+      headers: { 'Authorization': 'Bearer ' + getToken() }
+    });
+    if (!res.ok) return [];
+    return await res.json();
+  } catch (err) { return []; }
+}
+
+async function getChatHistoryAPI(orderId) {
+  try {
+    const res = await fetch(`/api/messages/${orderId}`, {
+      headers: { 'Authorization': 'Bearer ' + getToken() }
+    });
+    if (!res.ok) return [];
+    return await res.json();
+  } catch (err) { return []; }
+}
+
+async function sendMessageAPI(orderId, content) {
+  try {
+    const res = await fetch(`/api/messages/${orderId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getToken() },
+      body: JSON.stringify({ content })
+    });
+    return res.ok;
+  } catch (err) { return false; }
 }
 
 // ==========================================

@@ -55,6 +55,14 @@ const db = new sqlite3.Database('./naviapex.db', (err) => {
       status TEXT DEFAULT 'pending',
       date TEXT
     )`);
+
+    db.run(`CREATE TABLE IF NOT EXISTS messages (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      order_id TEXT,
+      sender_username TEXT,
+      content TEXT,
+      timestamp TEXT
+    )`);
   }
 });
 
@@ -158,6 +166,39 @@ app.post('/api/orders', authenticateToken, (req, res) => {
 
   db.run(`INSERT INTO orders (buyer, listingId, price, date) VALUES (?, ?, ?, ?)`,
     [buyer, listingId, price, date],
+    function(err) {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json({ success: true, id: this.lastID });
+    });
+});
+
+// ----------------------------------------------------
+// MESSAGES ENDPOINTS
+// ----------------------------------------------------
+
+app.get('/api/messages/conversations', authenticateToken, (req, res) => {
+  db.all(`SELECT DISTINCT order_id FROM messages ORDER BY timestamp DESC`, [], (err, rows) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(rows.map(r => r.order_id));
+  });
+});
+
+app.get('/api/messages/:order_id', authenticateToken, (req, res) => {
+  const { order_id } = req.params;
+  db.all(`SELECT * FROM messages WHERE order_id = ? ORDER BY timestamp ASC`, [order_id], (err, rows) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(rows);
+  });
+});
+
+app.post('/api/messages/:order_id', authenticateToken, (req, res) => {
+  const { order_id } = req.params;
+  const { content } = req.body;
+  const sender_username = req.user.username;
+  const timestamp = new Date().toISOString();
+
+  db.run(`INSERT INTO messages (order_id, sender_username, content, timestamp) VALUES (?, ?, ?, ?)`,
+    [order_id, sender_username, content, timestamp],
     function(err) {
       if (err) return res.status(500).json({ error: err.message });
       res.json({ success: true, id: this.lastID });

@@ -142,7 +142,7 @@ function showForgotPassword() {
 // If already logged in, redirect
 const user = getUser();
 if (user) {
-  window.location.href = user.role === 'owner' ? 'admin.html' : 'dashboard.html';
+  window.location.href = 'dashboard.html';
 }
 </script>
 </body>

@@ -647,6 +647,10 @@ function switchPage(page) {
   document.getElementById(`page-${page}`)?.classList.add('active');
   document.getElementById(`nav-${page}`)?.classList.add('active');
   window.scrollTo({top:0});
+
+  if (page === 'messages') {
+    loadConversations();
+  }
 }
 
 // ---- PROFILE ----
@@ -687,44 +691,100 @@ function confirmDelete() {
 function setDeposit(amount) { document.getElementById('depositAmount').value = amount; }
 
 // ---- MESSAGES ----
-const chatLogs = {
-  'NaviApex Support': [
-    {from:'system', text:'Welcome to NaviApex! 🎮 How can we help you today?'},
-    {from:'system', text:'Our support team is available 24/7. Feel free to ask anything!'},
-  ],
-};
 let currentChat = null;
 
-function openChat(name) {
-  currentChat = name;
-  document.getElementById('chatHeader').innerHTML = `
-    <div style="width:36px; height:36px; border-radius:50%; background:var(--gradient-red); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700;">${name.slice(0,2).toUpperCase()}</div>
-    <div><div style="font-size:14px; font-weight:700;">${name}</div><div style="font-size:12px; color:#00ff64;">● Online</div></div>
-  `;
-  const logs = chatLogs[name] || [];
-  document.getElementById('chatMessages').innerHTML = `<div style="display:flex; flex-direction:column; gap:12px; padding:20px;">${logs.map(m => `
-    <div style="display:flex; justify-content:${m.from==='me'?'flex-end':'flex-start'};">
-      <div style="max-width:70%; background:${m.from==='me'?'var(--gradient-button)':'var(--bg-surface)'}; border:${m.from==='me'?'none':'1px solid var(--border-color)'}; border-radius:${m.from==='me'?'14px 14px 4px 14px':'14px 14px 14px 4px'}; padding:10px 14px; font-size:14px; color:${m.from==='me'?'#fff':'var(--text-primary)'}; line-height:1.5;">
-        ${m.text}
+async function loadConversations() {
+  const container = document.getElementById('conversationList');
+  container.innerHTML = '<div style="padding:16px; text-align:center; color:var(--text-muted);"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+
+  let orderIds = [];
+
+  if (user.role === 'owner') {
+    // Owner fetches all active conversations from backend
+    orderIds = await getConversationsAPI();
+  } else {
+    // Users see chats for their local orders
+    const orders = getOrders().filter(o => o.buyer === user.username || o.seller === user.username);
+    orderIds = orders.map(o => o.id);
+  }
+
+  if (orderIds.length === 0) {
+    container.innerHTML = '<div style="padding:16px; text-align:center; color:var(--text-muted); font-size:13px;">No active order chats.</div>';
+    return;
+  }
+
+  container.innerHTML = orderIds.map(id => `
+    <div class="notif-row" onclick="openChat('${id}')" id="conv-${id}">
+      <div style="width:36px; height:36px; border-radius:50%; background:var(--gradient-red); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0;"><i class="fas fa-box"></i></div>
+      <div style="flex:1; min-width:0;">
+        <div style="font-size:13px; font-weight:700;">Order ${id}</div>
+        <div style="font-size:12px; color:var(--text-muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">Click to view chat</div>
       </div>
     </div>
-  `).join('')}</div>`;
-  document.getElementById('chatInputArea').style.display = 'flex';
-  document.getElementById('chatMessages').scrollTop = 999999;
+  `).join('');
 }
 
-function sendMessage() {
+async function openChat(orderId) {
+  currentChat = orderId;
+  document.getElementById('chatHeader').innerHTML = `
+    <div style="width:36px; height:36px; border-radius:50%; background:var(--gradient-red); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700;"><i class="fas fa-box"></i></div>
+    <div><div style="font-size:14px; font-weight:700;">Order ${orderId}</div><div style="font-size:12px; color:#00ff64;">● Secure 3-Way Chat</div></div>
+  `;
+  
+  document.getElementById('chatMessages').innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:20px;"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+  document.getElementById('chatInputArea').style.display = 'flex';
+
+  const messages = await getChatHistoryAPI(orderId);
+  
+  if (messages.length === 0) {
+    document.getElementById('chatMessages').innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:20px;">No messages yet. Send the first message!</div>';
+    return;
+  }
+
+  document.getElementById('chatMessages').innerHTML = `<div style="display:flex; flex-direction:column; gap:12px; padding:20px; width:100%;">${messages.map(m => {
+    const isMe = m.sender_username === user.username;
+    const isOwner = m.sender_username === 'NaviOwner';
+    const bg = isMe ? 'var(--gradient-button)' : (isOwner ? 'rgba(255,215,0,0.1)' : 'var(--bg-surface)');
+    const border = isMe ? 'none' : (isOwner ? '1px solid var(--apex-gold)' : '1px solid var(--border-color)');
+    const color = isMe ? '#fff' : (isOwner ? 'var(--apex-gold)' : 'var(--text-primary)');
+    const radius = isMe ? '14px 14px 4px 14px' : '14px 14px 14px 4px';
+    
+    return `
+      <div style="display:flex; flex-direction:column; align-items:${isMe ? 'flex-end' : 'flex-start'}; margin-bottom:4px;">
+        <div style="font-size:10px; color:var(--text-muted); margin-bottom:2px; padding:0 4px;">
+          ${m.sender_username} ${isOwner ? '👑' : ''} • ${new Date(m.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+        </div>
+        <div style="max-width:70%; background:${bg}; border:${border}; border-radius:${radius}; padding:10px 14px; font-size:14px; color:${color}; line-height:1.5;">
+          ${m.content}
+        </div>
+      </div>
+    `;
+  }).join('')}</div>`;
+  
+  const chatMessagesEl = document.getElementById('chatMessages');
+  chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
+}
+
+async function sendMessage() {
   const input = document.getElementById('chatInput');
   const text = input.value.trim();
   if (!text || !currentChat) return;
-  chatLogs[currentChat] = chatLogs[currentChat] || [];
-  chatLogs[currentChat].push({from:'me', text});
-  input.value = '';
-  openChat(currentChat);
-  setTimeout(() => {
-    chatLogs[currentChat].push({from:'other', text:'Message received! A NaviApex admin will respond to your registered email shortly.'});
+  
+  const btn = input.nextElementSibling;
+  btn.disabled = true;
+  input.disabled = true;
+  
+  const success = await sendMessageAPI(currentChat, text);
+  
+  btn.disabled = false;
+  input.disabled = false;
+  
+  if (success) {
+    input.value = '';
     openChat(currentChat);
-  }, 1200);
+  } else {
+    showToast('Failed to send message', 'error');
+  }
 }
 
 document.getElementById('chatInput')?.addEventListener('keydown', e => { if(e.key==='Enter') sendMessage(); });
