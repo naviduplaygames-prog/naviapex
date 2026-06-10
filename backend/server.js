@@ -182,7 +182,7 @@ app.post('/api/seed', (req, res) => {
 });
 
 // Serve frontend for all non-API routes
-app.get('*', (req, res) => {
+app.get(/(.*)/, (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'website', 'index.html'));
 });
 
