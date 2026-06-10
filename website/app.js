@@ -398,8 +398,15 @@ async function declineApplicationAPI(id) {
       method: 'POST',
       headers: { 'Authorization': 'Bearer ' + getToken() }
     });
-    return res.ok;
   } catch (err) { return false; }
+}
+
+async function getStatsAPI() {
+  try {
+    const res = await fetch('/api/stats');
+    if (!res.ok) return null;
+    return await res.json();
+  } catch (err) { return null; }
 }
 
 // ==========================================

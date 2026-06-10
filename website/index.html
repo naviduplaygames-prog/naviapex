@@ -547,8 +547,23 @@ function orderNow(id) {
 
 // Init
 renderListings(listings);
-animateCounters();
 
+async function initStats() {
+  if (typeof getStatsAPI === 'function') {
+    const stats = await getStatsAPI();
+    if (stats) {
+      const counters = document.querySelectorAll('.hero-stat-number');
+      if (counters.length >= 3) {
+        counters[0].dataset.count = stats.ordersDone;
+        counters[1].dataset.count = stats.activeSellers;
+        counters[2].dataset.count = stats.satisfaction;
+      }
+    }
+  }
+  animateCounters();
+}
+
+initStats();
 function scrollToSection(id) {
   document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
 }

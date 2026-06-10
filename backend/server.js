@@ -288,6 +288,20 @@ app.post('/api/applications/:id/decline', authenticateToken, (req, res) => {
   });
 });
 
+app.get('/api/stats', (req, res) => {
+  db.get(`SELECT COUNT(*) as sellers FROM users WHERE role IN ('seller', 'owner')`, [], (err, userRow) => {
+    if (err) return res.status(500).json({ error: err.message });
+    db.get(`SELECT COUNT(*) as orders FROM orders WHERE status = 'completed'`, [], (err, orderRow) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json({
+        ordersDone: 2000 + (orderRow.orders || 0),
+        activeSellers: 8 + (userRow.sellers || 0),
+        satisfaction: 100
+      });
+    });
+  });
+});
+
 // Serve frontend for all non-API routes
 app.get(/(.*)/, (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'website', 'index.html'));
