@@ -341,20 +341,6 @@
               </div>
               <div class="notif-dot"></div>
             </div>
-            <div class="notif-row" onclick="openChat('ApexPredX')">
-              <div style="width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#ff4400,#c00); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;">AP</div>
-              <div style="flex:1;">
-                <div style="font-size:13px; font-weight:700;">ApexPredX</div>
-                <div style="font-size:12px; color:var(--text-muted);">Ready to start your boost!</div>
-              </div>
-            </div>
-            <div class="notif-row" onclick="openChat('CoachWraith')">
-              <div style="width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#9b59b6,#6c3483); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;">CW</div>
-              <div style="flex:1;">
-                <div style="font-size:13px; font-weight:700;">CoachWraith</div>
-                <div style="font-size:12px; color:var(--text-muted);">Session confirmed for tomorrow!</div>
-              </div>
-            </div>
           </div>
         </div>
         <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-xl); display:flex; flex-direction:column;" id="chatWindow">
@@ -706,14 +692,6 @@ const chatLogs = {
     {from:'system', text:'Welcome to NaviApex! 🎮 How can we help you today?'},
     {from:'system', text:'Our support team is available 24/7. Feel free to ask anything!'},
   ],
-  'ApexPredX': [
-    {from:'other', text:'Hey! I\'ve received your boost order. Ready to start anytime!'},
-    {from:'other', text:'Just need your login details via our secure system.'},
-  ],
-  'CoachWraith': [
-    {from:'other', text:'Session confirmed! See you tomorrow at the scheduled time.'},
-    {from:'other', text:'Please add me on Discord: CoachWraith#2024'},
-  ],
 };
 let currentChat = null;
 
@@ -744,7 +722,7 @@ function sendMessage() {
   input.value = '';
   openChat(currentChat);
   setTimeout(() => {
-    chatLogs[currentChat].push({from:'other', text:'Thanks for your message! I\'ll get back to you shortly.'});
+    chatLogs[currentChat].push({from:'other', text:'Message received! A NaviApex admin will respond to your registered email shortly.'});
     openChat(currentChat);
   }, 1200);
 }
