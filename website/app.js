@@ -401,7 +401,7 @@ function openModal(id) {
     document.body.style.overflow = 'hidden';
   }
 }
-
+function closeModal(id) {
   const modal = document.getElementById(id);
   if (modal) {
     modal.classList.remove('active');
