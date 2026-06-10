@@ -237,12 +237,11 @@ function handleSignup(e) {
   btn.disabled = true;
   btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating account...';
 
-  setTimeout(() => {
-    const result = registerUser({ username, email, password, role: accountType });
+  setTimeout(async () => {
+    const result = await registerUser({ username, email, password, role: accountType });
     if (result.success) {
-      setUser(result.user);
-      showToast(`Welcome to NaviApex, ${username}! 🎮`, 'success');
-      setTimeout(() => window.location.href = 'dashboard.html', 1200);
+      showToast(`Account created successfully! Please log in. 🎮`, 'success');
+      setTimeout(() => window.location.href = 'login.html', 1500);
     } else {
       btn.disabled = false;
       btn.innerHTML = '<i class="fas fa-rocket"></i> Create Account';
