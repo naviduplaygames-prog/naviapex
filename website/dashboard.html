@@ -713,22 +713,32 @@ async function loadConversations() {
     return;
   }
 
-  container.innerHTML = orderIds.map(id => `
-    <div class="notif-row" onclick="openChat('${id}')" id="conv-${id}">
-      <div style="width:36px; height:36px; border-radius:50%; background:var(--gradient-red); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0;"><i class="fas fa-box"></i></div>
-      <div style="flex:1; min-width:0;">
-        <div style="font-size:13px; font-weight:700;">Order ${id}</div>
-        <div style="font-size:12px; color:var(--text-muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">Click to view chat</div>
+  container.innerHTML = orderIds.map(id => {
+    const isSupport = id.startsWith('support_');
+    const title = isSupport ? 'Support: ' + id.replace('support_', '') : 'Order ' + id;
+    const icon = isSupport ? '<i class="fas fa-headset"></i>' : '<i class="fas fa-box"></i>';
+    return `
+      <div class="notif-row" onclick="openChat('${id}')" id="conv-${id}">
+        <div style="width:36px; height:36px; border-radius:50%; background:var(--gradient-red); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0;">${icon}</div>
+        <div style="flex:1; min-width:0;">
+          <div style="font-size:13px; font-weight:700;">${title}</div>
+          <div style="font-size:12px; color:var(--text-muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">Click to view chat</div>
+        </div>
       </div>
-    </div>
-  `).join('');
+    `;
+  }).join('');
 }
 
 async function openChat(orderId) {
   currentChat = orderId;
+  const isSupport = orderId.startsWith('support_');
+  const title = isSupport ? 'Support: ' + orderId.replace('support_', '') : 'Order ' + orderId;
+  const icon = isSupport ? '<i class="fas fa-headset"></i>' : '<i class="fas fa-box"></i>';
+  const subtitle = isSupport ? '● Live Support Chat' : '● Secure 3-Way Chat';
+
   document.getElementById('chatHeader').innerHTML = `
-    <div style="width:36px; height:36px; border-radius:50%; background:var(--gradient-red); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700;"><i class="fas fa-box"></i></div>
-    <div><div style="font-size:14px; font-weight:700;">Order ${orderId}</div><div style="font-size:12px; color:#00ff64;">● Secure 3-Way Chat</div></div>
+    <div style="width:36px; height:36px; border-radius:50%; background:var(--gradient-red); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700;">${icon}</div>
+    <div><div style="font-size:14px; font-weight:700;">${title}</div><div style="font-size:12px; color:#00ff64;">${subtitle}</div></div>
   `;
   
   document.getElementById('chatMessages').innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:20px;"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';

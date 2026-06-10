@@ -402,7 +402,6 @@ function openModal(id) {
   }
 }
 
-function closeModal(id) {
   const modal = document.getElementById(id);
   if (modal) {
     modal.classList.remove('active');
@@ -418,6 +417,121 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
 });
 
 // ==========================================
+// FLOATING SUPPORT WIDGET
+// ==========================================
+
+function renderFloatingSupport() {
+  const user = getUser();
+  // Only show for logged in non-owner users
+  if (!user || user.role === 'owner') return;
+
+  const html = `
+    <div id="floatingSupportBtn" onclick="toggleSupportWindow()">
+      <i class="fas fa-comment-dots"></i>
+      <div class="badge" id="supportUnreadBadge" style="display:none;">!</div>
+    </div>
+    
+    <div id="floatingSupportWindow">
+      <div class="support-header">
+        <div>
+          <div style="font-weight:800; font-size:14px;"><i class="fas fa-headset"></i> NaviApex Support</div>
+          <div style="font-size:11px; color:rgba(255,255,255,0.7);">We typically reply in a few minutes</div>
+        </div>
+        <i class="fas fa-times" style="cursor:pointer;" onclick="toggleSupportWindow()"></i>
+      </div>
+      <div class="support-messages" id="supportMessages">
+        <div style="text-align:center; color:var(--text-muted); font-size:12px; margin-top:20px;">
+          <i class="fas fa-spinner fa-spin"></i> Loading...
+        </div>
+      </div>
+      <div class="support-input-area">
+        <input type="text" id="supportInput" placeholder="Type your message..." style="flex:1; background:var(--bg-surface); border:1px solid var(--border-color); border-radius:14px; padding:10px 14px; color:var(--text-primary); font-size:13px;" onkeydown="if(event.key==='Enter') sendSupportMessage()">
+        <button class="btn btn-primary" style="padding:10px 14px; border-radius:14px;" onclick="sendSupportMessage()"><i class="fas fa-paper-plane"></i></button>
+      </div>
+    </div>
+  `;
+  document.body.insertAdjacentHTML('beforeend', html);
+  loadSupportMessages();
+}
+
+function toggleSupportWindow() {
+  const win = document.getElementById('floatingSupportWindow');
+  win.classList.toggle('active');
+  if (win.classList.contains('active')) {
+    loadSupportMessages();
+    document.getElementById('supportUnreadBadge').style.display = 'none';
+  }
+}
+
+async function loadSupportMessages() {
+  const user = getUser();
+  if (!user) return;
+  const supportId = 'support_' + user.username;
+  const messages = await getChatHistoryAPI(supportId);
+  const container = document.getElementById('supportMessages');
+  if (!container) return;
+
+  if (messages.length === 0) {
+    container.innerHTML = `
+      <div style="display:flex; flex-direction:column; align-items:flex-start; margin-bottom:8px;">
+        <div style="font-size:10px; color:var(--text-muted); margin-bottom:2px; padding:0 4px;">NaviOwner 👑</div>
+        <div style="max-width:85%; background:rgba(255,215,0,0.1); border:1px solid var(--apex-gold); border-radius:14px 14px 14px 4px; padding:10px 14px; font-size:13px; color:var(--apex-gold); line-height:1.4;">
+          Welcome to NaviApex Support! How can we help you today?
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = messages.map(m => {
+    const isMe = m.sender_username === user.username;
+    const isOwner = m.sender_username === 'NaviOwner';
+    const bg = isMe ? 'var(--gradient-button)' : (isOwner ? 'rgba(255,215,0,0.1)' : 'var(--bg-surface)');
+    const border = isMe ? 'none' : (isOwner ? '1px solid var(--apex-gold)' : '1px solid var(--border-color)');
+    const color = isMe ? '#fff' : (isOwner ? 'var(--apex-gold)' : 'var(--text-primary)');
+    const radius = isMe ? '14px 14px 4px 14px' : '14px 14px 14px 4px';
+    
+    return `
+      <div style="display:flex; flex-direction:column; align-items:${isMe ? 'flex-end' : 'flex-start'}; margin-bottom:8px;">
+        <div style="font-size:10px; color:var(--text-muted); margin-bottom:2px; padding:0 4px;">
+          ${m.sender_username} ${isOwner ? '👑' : ''} • ${new Date(m.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+        </div>
+        <div style="max-width:85%; background:${bg}; border:${border}; border-radius:${radius}; padding:10px 14px; font-size:13px; color:${color}; line-height:1.4; word-wrap:break-word;">
+          ${m.content}
+        </div>
+      </div>
+    `;
+  }).join('');
+  
+  container.scrollTop = container.scrollHeight;
+}
+
+async function sendSupportMessage() {
+  const user = getUser();
+  if (!user) return;
+  const input = document.getElementById('supportInput');
+  const text = input.value.trim();
+  if (!text) return;
+
+  const btn = input.nextElementSibling;
+  input.disabled = true;
+  btn.disabled = true;
+
+  const supportId = 'support_' + user.username;
+  const success = await sendMessageAPI(supportId, text);
+
+  input.disabled = false;
+  btn.disabled = false;
+
+  if (success) {
+    input.value = '';
+    loadSupportMessages();
+  } else {
+    showToast('Failed to send message', 'error');
+  }
+}
+
+// ==========================================
 // INIT
 // ==========================================
 
@@ -426,6 +540,7 @@ document.addEventListener('DOMContentLoaded', () => {
   createParticles();
   animateCounters();
   setTimeout(initAnimations, 100);
+  renderFloatingSupport();
 
   // Initialize owner in storage
   getUsers();
