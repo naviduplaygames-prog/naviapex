@@ -461,14 +461,26 @@
 <script src="paypal.js"></script>
 <script>
 const ranks = [
-  { id:'bronze',   label:'Bronze',   icon:'🥉', price:0 },
-  { id:'silver',   label:'Silver',   icon:'🥈', price:10 },
-  { id:'gold',     label:'Gold',     icon:'🥇', price:15 },
-  { id:'platinum', label:'Platinum', icon:'💎', price:25 },
-  { id:'diamond',  label:'Diamond',  icon:'💠', price:55 },
-  { id:'master',   label:'Master',   icon:'👑', price:140 },
-  { id:'predator', label:'Predator', icon:'🔴', price:200 },
+  { id:'bronze',   label:'Bronze',   icon:'🥉' },
+  { id:'silver',   label:'Silver',   icon:'🥈' },
+  { id:'gold',     label:'Gold',     icon:'🥇' },
+  { id:'platinum', label:'Platinum', icon:'💎' },
+  { id:'diamond',  label:'Diamond',  icon:'💠' },
+  { id:'master',   label:'Master',   icon:'👑' },
+  { id:'predator', label:'Predator', icon:'🔴' },
 ];
+
+// Cost to go from rank X div 4 to rank X div 3 (i.e. per division within rank X)
+// Bronze tier: $10 total (4 divs) = $2.50/div
+// Silver tier: $5 total (4 divs) = $1.25/div
+// Gold tier: $10 total (4 divs) = $2.50/div
+// Platinum tier: $30 total (4 divs) = $7.50/div
+// Diamond tier: $85 total (4 divs to Masters) = $21.25/div
+const tierCostPerDiv = [2.50, 1.25, 2.50, 7.50, 21.25];
+
+// Cumulative cost from Bronze 4 to each rank's div 4
+// Bronze4=0, Silver4=10, Gold4=15, Platinum4=25, Diamond4=55, Master=140
+const tierBaseCost = [0, 10, 15, 25, 55, 140, 200];
 
 let selectedFrom = 0;
 let selectedFromDiv = 4; // 4, 3, 2, 1
@@ -544,21 +556,21 @@ function getAddonsMultiplier() {
 }
 
 function calculateBasePrice() {
-  const from = ranks[selectedFrom];
-  const to = ranks[selectedTo];
-  
-  // Calculate abstract points for progression
-  const getPoints = (idx, div, rp) => {
+  // Get the cumulative cost from Bronze 4 for a given rank position
+  const getCumulativeCost = (idx, div, rp) => {
     if (idx <= 4) {
-      return ranks[idx].price + (ranks[Math.min(idx+1, 5)].price - ranks[idx].price) * ((4 - div) / 4);
+      // Cost to reach this rank's div 4, plus divisions climbed within this rank
+      const divsClimbed = 4 - div; // e.g. div 4 = 0 climbed, div 1 = 3 climbed
+      return tierBaseCost[idx] + (divsClimbed * tierCostPerDiv[idx]);
     } else {
-      return ranks[5].price + (Math.max(0, rp - 15000) * 0.005); // Master starts at 15000 RP
+      // Master/Predator: base cost to reach Master + RP bonus
+      return tierBaseCost[5] + (Math.max(0, rp - 15000) * 0.005);
     }
   };
 
-  let fromPoints = getPoints(selectedFrom, selectedFromDiv, selectedFromRP);
-  let toPoints = getPoints(selectedTo, selectedToDiv, selectedToRP);
-  return Math.max(0, toPoints - fromPoints);
+  const fromCost = getCumulativeCost(selectedFrom, selectedFromDiv, selectedFromRP);
+  const toCost = getCumulativeCost(selectedTo, selectedToDiv, selectedToRP);
+  return Math.max(0, toCost - fromCost);
 }
 
 function getRankLabel(idx, div, rp) {
