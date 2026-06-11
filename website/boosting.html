@@ -97,6 +97,7 @@
               <div class="rank-select-label">Current Rank</div>
               <div class="rank-cards-row" style="flex-wrap:wrap;" id="currentRanks"></div>
               <div id="currentDivisions"></div>
+              <div style="font-size: 11px; color: var(--text-muted); margin-top: 8px;">* If you are Rookie rank, please select Bronze to start (Rookie is free).</div>
             </div>
             <div style="text-align:center; font-size:30px; color:var(--text-muted); padding:0 8px;">→</div>
             <div>
@@ -461,11 +462,11 @@
 <script>
 const ranks = [
   { id:'bronze',   label:'Bronze',   icon:'🥉', price:0 },
-  { id:'silver',   label:'Silver',   icon:'🥈', price:5 },
+  { id:'silver',   label:'Silver',   icon:'🥈', price:10 },
   { id:'gold',     label:'Gold',     icon:'🥇', price:15 },
-  { id:'platinum', label:'Platinum', icon:'💎', price:30 },
+  { id:'platinum', label:'Platinum', icon:'💎', price:25 },
   { id:'diamond',  label:'Diamond',  icon:'💠', price:55 },
-  { id:'master',   label:'Master',   icon:'👑', price:135 },
+  { id:'master',   label:'Master',   icon:'👑', price:140 },
   { id:'predator', label:'Predator', icon:'🔴', price:200 },
 ];
 
@@ -551,7 +552,7 @@ function calculateBasePrice() {
     if (idx <= 4) {
       return ranks[idx].price + (ranks[Math.min(idx+1, 5)].price - ranks[idx].price) * ((4 - div) / 4);
     } else {
-      return ranks[5].price + (rp * 0.005); // Master+: $0.005 per RP
+      return ranks[5].price + (Math.max(0, rp - 15000) * 0.005); // Master starts at 15000 RP
     }
   };
 
