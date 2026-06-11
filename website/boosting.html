@@ -461,13 +461,13 @@
 <script src="paypal.js"></script>
 <script>
 const ranks = [
-  { id:'bronze',   label:'Bronze',   icon:'🥉' },
-  { id:'silver',   label:'Silver',   icon:'🥈' },
-  { id:'gold',     label:'Gold',     icon:'🥇' },
-  { id:'platinum', label:'Platinum', icon:'💎' },
-  { id:'diamond',  label:'Diamond',  icon:'💠' },
-  { id:'master',   label:'Master',   icon:'👑' },
-  { id:'predator', label:'Predator', icon:'🔴' },
+  { id:'bronze',   label:'Bronze',   icon:'ranks/bronze.png' },
+  { id:'silver',   label:'Silver',   icon:'ranks/silver.png' },
+  { id:'gold',     label:'Gold',     icon:'ranks/gold.png' },
+  { id:'platinum', label:'Platinum', icon:'ranks/platinum.png' },
+  { id:'diamond',  label:'Diamond',  icon:'ranks/diamond.png' },
+  { id:'master',   label:'Master',   icon:'ranks/master.png' },
+  { id:'predator', label:'Predator', icon:'ranks/predator.png' },
 ];
 
 // Cost to go from rank X div 4 to rank X div 3 (i.e. per division within rank X)
@@ -495,7 +495,7 @@ function renderRankButtons() {
     const el = document.getElementById(containerId);
     el.innerHTML = ranks.map((r, i) => `
       <div class="rank-btn ${i === selectedIdx ? 'selected' : ''}" id="${containerId}_${i}" onclick="${onClickFn}(${i})">
-        <span class="rank-icon">${r.icon}</span>
+        <span class="rank-icon"><img src="${r.icon}" alt="${r.label}"></span>
         <span class="rank-name">${r.label}</span>
       </div>
     `).join('');
@@ -575,8 +575,9 @@ function calculateBasePrice() {
 
 function getRankLabel(idx, div, rp) {
   const r = ranks[idx];
-  if (idx <= 4) return `${r.icon} ${r.label} ${div}`;
-  return `${r.icon} ${r.label} (${rp} RP)`;
+  const iconImg = `<img src="${r.icon}" alt="${r.label}" style="width:18px;height:18px;object-fit:contain;vertical-align:middle;margin-right:4px;">`;
+  if (idx <= 4) return `${iconImg} ${r.label} ${div}`;
+  return `${iconImg} ${r.label} (${rp} RP)`;
 }
 
 function updatePrice() {
@@ -589,8 +590,8 @@ function updatePrice() {
   const timeDays = Math.ceil(base / 15);
   const timeStr = base <= 0 ? '—' : `${Math.max(1, timeDays - 1)}-${timeDays + 1} days`;
 
-  document.getElementById('summaryFrom').textContent = getRankLabel(selectedFrom, selectedFromDiv, selectedFromRP);
-  document.getElementById('summaryTo').textContent = getRankLabel(selectedTo, selectedToDiv, selectedToRP);
+  document.getElementById('summaryFrom').innerHTML = getRankLabel(selectedFrom, selectedFromDiv, selectedFromRP);
+  document.getElementById('summaryTo').innerHTML = getRankLabel(selectedTo, selectedToDiv, selectedToRP);
   document.getElementById('summaryTime').textContent = timeStr;
   document.getElementById('summaryBase').textContent = base > 0 ? `$${base.toFixed(2)}` : '—';
 

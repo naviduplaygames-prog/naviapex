@@ -1187,7 +1187,8 @@ input, textarea, select, button {
   box-shadow: var(--shadow-glow-subtle);
 }
 
-.rank-icon { font-size: 28px; }
+.rank-icon { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; }
+.rank-icon img { width: 100%; height: 100%; object-fit: contain; }
 
 .rank-name {
   font-family: 'Rajdhani', sans-serif;
